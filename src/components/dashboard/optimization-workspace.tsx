@@ -167,7 +167,7 @@ export function OptimizationWorkspace({
     opt.finalScore !== null && opt.finalScore.version === opt.currentDraftVersion;
 
   return (
-    <div className="space-y-8">
+    <div className="max-w-7xl mx-auto space-y-8">
       {/* Toast */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 rounded-xl bg-white text-[#252525] px-4 py-3 text-xs shadow-xl flex items-center gap-2.5 border border-[#E8E8E8] animate-in fade-in slide-in-from-bottom-2">

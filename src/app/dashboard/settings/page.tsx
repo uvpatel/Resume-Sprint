@@ -10,7 +10,7 @@ export default async function SettingsPage() {
   if (!user) return null;
 
   return (
-    <div className="max-w-4xl space-y-8">
+    <div className="max-w-5xl mx-auto space-y-8">
       {/* Header */}
       <div className="border-b border-[#E8E8E8] pb-6">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#252525]">
@@ -22,8 +22,8 @@ export default async function SettingsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Profile Card */}
-        <div className="rounded-xl border border-[#E8E8E8] bg-white p-6 space-y-4 shadow-xs">
+        {/* Candidate Profile Card */}
+        <div className="rounded-xl border border-[#E8E8E8] bg-white p-6 space-y-5 shadow-xs">
           <div className="flex items-center gap-2 pb-3.5 border-b border-[#E8E8E8]">
             <div className="h-7 w-7 rounded-lg bg-[#EAF4FF] text-[#2996F3] flex items-center justify-center">
               <User className="h-4 w-4" />
@@ -33,9 +33,9 @@ export default async function SettingsPage() {
             </h2>
           </div>
 
-          <div className="space-y-3.5 text-xs">
+          <div className="space-y-4 text-xs">
             <div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#9CA3AF] block">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#9CA3AF] block">
                 Full Name
               </span>
               <p className="text-sm font-bold text-[#252525] mt-0.5">
@@ -44,7 +44,7 @@ export default async function SettingsPage() {
             </div>
 
             <div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#9CA3AF] block">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#9CA3AF] block">
                 Email Address
               </span>
               <p className="text-sm font-mono text-[#252525] mt-0.5">
@@ -53,7 +53,7 @@ export default async function SettingsPage() {
             </div>
 
             <div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#9CA3AF] block">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#9CA3AF] block">
                 User ID
               </span>
               <p className="text-xs font-mono text-[#626262] mt-0.5">
@@ -62,8 +62,8 @@ export default async function SettingsPage() {
             </div>
 
             <div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#9CA3AF] block mb-1">
-                Session Status
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#9CA3AF] block mb-1">
+                Authentication Status
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 px-3 py-1 text-xs font-semibold">
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -74,77 +74,77 @@ export default async function SettingsPage() {
         </div>
 
         {/* ATS & Engine Configuration */}
-        <div className="rounded-xl border border-[#E8E8E8] bg-white p-6 space-y-4 shadow-xs">
+        <div className="rounded-xl border border-[#E8E8E8] bg-white p-6 space-y-5 shadow-xs">
           <div className="flex items-center gap-2 pb-3.5 border-b border-[#E8E8E8]">
             <div className="h-7 w-7 rounded-lg bg-[#EAF4FF] text-[#2996F3] flex items-center justify-center">
               <Database className="h-4 w-4" />
             </div>
             <h2 className="text-sm font-bold text-[#252525]">
-              Scoring & Rubric Model
+              Scoring & Rubric Engine
             </h2>
           </div>
 
-          <div className="space-y-3 text-xs text-[#626262] leading-relaxed">
+          <div className="space-y-3.5 text-xs text-[#626262] leading-relaxed">
             <div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#9CA3AF] block">
-                Scoring Rubric Version
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#9CA3AF] block">
+                Active Rubric Standard
               </span>
               <p className="font-mono font-bold text-[#252525] text-sm mt-0.5">
-                Rubric v1.0 (40 / 20 / 20 / 10 / 10)
+                Canonical Rubric v1.0 (40 / 20 / 20 / 10 / 10)
               </p>
             </div>
 
             <p className="text-xs text-[#626262]">
-              Calibrated strictly against evidence: Keyword Match (40), Role Alignment (20), Quantified Impact (20), Experience Depth (10), and ATS Readability (10).
+              Strictly calibrated dimensions: Keywords (40), Alignment (20), Quantified Impact (20), Experience Depth (10), and ATS Formatting (10).
             </p>
 
-            <div className="p-3.5 bg-[#F8FAFC] rounded-lg border border-[#E8E8E8]">
-              <span className="text-xs font-bold text-[#252525] block mb-1">
+            <div className="p-3.5 bg-[#F8FAFC] rounded-lg border border-[#E8E8E8] space-y-1">
+              <span className="text-xs font-bold text-[#252525] block">
                 Zero Fabrication Policy
               </span>
-              <p className="text-xs text-[#626262] leading-normal">
-                ResumeSprint will never inject synthetic employers, unverified technologies, or fictitious percentage metrics into your resume.
+              <p className="text-[11px] text-[#626262] leading-normal">
+                ResumeSprint will never inject synthetic accomplishments, invented employers, or fictitious metrics into your resume.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Security & Data Privacy */}
-        <div className="md:col-span-2 rounded-xl border border-[#E8E8E8] bg-white p-6 space-y-4 shadow-xs">
+        {/* Security & Data Isolation */}
+        <div className="md:col-span-2 rounded-xl border border-[#E8E8E8] bg-white p-6 space-y-5 shadow-xs">
           <div className="flex items-center gap-2 pb-3.5 border-b border-[#E8E8E8]">
             <div className="h-7 w-7 rounded-lg bg-[#EAF4FF] text-[#2996F3] flex items-center justify-center">
               <Lock className="h-4 w-4" />
             </div>
             <h2 className="text-sm font-bold text-[#252525]">
-              Data Privacy & Protection
+              Security & Data Governance
             </h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-            <div className="p-4 bg-[#F8FAFC] rounded-xl border border-[#E8E8E8]">
-              <span className="font-bold text-[#252525] block mb-1.5">
+            <div className="p-4 bg-[#F8FAFC] rounded-lg border border-[#E8E8E8] space-y-1">
+              <span className="font-bold text-[#252525] block">
                 User Isolation
               </span>
               <p className="text-xs text-[#626262] leading-relaxed">
-                Every resume document and scan session is cryptographically bound to your user ID.
+                All resume documents and scans are strictly scoped and authorized to your user session ID.
               </p>
             </div>
 
-            <div className="p-4 bg-[#F8FAFC] rounded-xl border border-[#E8E8E8]">
-              <span className="font-bold text-[#252525] block mb-1.5">
-                Server-Side AI Secrets
+            <div className="p-4 bg-[#F8FAFC] rounded-lg border border-[#E8E8E8] space-y-1">
+              <span className="font-bold text-[#252525] block">
+                Server-Side Processing
               </span>
               <p className="text-xs text-[#626262] leading-relaxed">
-                Gemini API tokens and models remain strictly on the server and are never exposed to clients.
+                Document text extraction and AI evaluation occur strictly in isolated server-side sandboxes.
               </p>
             </div>
 
-            <div className="p-4 bg-[#F8FAFC] rounded-xl border border-[#E8E8E8]">
-              <span className="font-bold text-[#252525] block mb-1.5">
-                Preservation Gate
+            <div className="p-4 bg-[#F8FAFC] rounded-lg border border-[#E8E8E8] space-y-1">
+              <span className="font-bold text-[#252525] block">
+                Preservation Verification
               </span>
               <p className="text-xs text-[#626262] leading-relaxed">
-                Export and downloads are blocked if any original fact or date disappears from your working draft.
+                Exports are cryptographically gated. Any accidental omission of historical facts halts file download.
               </p>
             </div>
           </div>

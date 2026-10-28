@@ -28,12 +28,12 @@ export default async function HistoryPage() {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="max-w-7xl mx-auto space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E8E8E8] pb-6">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#252525]">
-            Scan History
+            Analysis History
           </h1>
           <p className="text-sm text-[#626262] mt-1">
             Historical diagnostic evaluations timestamped with job criteria hashes and rubric breakdown calculations.
@@ -42,17 +42,17 @@ export default async function HistoryPage() {
 
         <Link
           href="/dashboard/new"
-          className="inline-flex items-center gap-2 rounded-lg bg-[#2996F3] hover:bg-[#147DD8] text-white px-4 py-2 text-sm font-semibold shadow-sm shadow-blue-500/20 transition-all active:scale-[0.99]"
+          className="inline-flex items-center gap-2 rounded-lg bg-[#2996F3] hover:bg-[#147DD8] text-white px-4 py-2 text-sm font-semibold shadow-xs transition-all active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2996F3]"
         >
           <Plus className="h-4 w-4" />
-          <span>New scan</span>
+          <span>Analyze Resume</span>
         </Link>
       </div>
 
       {scansWithResumes.length === 0 ? (
         <EmptyState
           icon={History}
-          title="No scan history yet"
+          title="No scan history found"
           description="When you analyze your resume against job postings, your match reports and improvement records will appear here."
           actionText="Create First Scan"
           actionHref="/dashboard/new"
@@ -68,15 +68,18 @@ export default async function HistoryPage() {
                 <div className="flex items-start gap-4">
                   <div className="h-12 w-12 rounded-xl bg-[#EAF4FF] border border-[#2996F3]/20 text-[#147DD8] font-bold flex flex-col items-center justify-center shrink-0 shadow-xs">
                     <span className="text-base font-mono leading-none">{scan.score}</span>
-                    <span className="text-[9px] font-mono text-[#2996F3] uppercase mt-0.5 tracking-wider font-semibold">
-                      MATCH
+                    <span className="text-[9px] font-mono text-[#2996F3] uppercase mt-1 tracking-wider font-semibold">
+                      SCORE
                     </span>
                   </div>
 
                   <div className="space-y-1.5 min-w-0">
-                    <h3 className="text-sm font-bold text-[#252525] truncate">
+                    <Link
+                      href={`/dashboard/resumes/${scan.resumeId}/scan`}
+                      className="text-sm font-bold text-[#252525] hover:text-[#2996F3] truncate block transition-colors"
+                    >
                       {scan.targetRole}
-                    </h3>
+                    </Link>
                     <div className="flex flex-wrap items-center gap-2 text-xs text-[#626262]">
                       <span className="flex items-center gap-1 font-mono text-xs">
                         <FileText className="h-3.5 w-3.5 text-[#9CA3AF]" />
@@ -89,14 +92,14 @@ export default async function HistoryPage() {
                       </span>
                     </div>
 
-                    <div className="pt-1.5 flex flex-wrap items-center gap-2 text-xs font-mono">
-                      <span className="text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md font-semibold">
+                    <div className="pt-1 flex flex-wrap items-center gap-2 text-xs font-mono">
+                      <span className="text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md font-semibold text-[11px]">
                         ✓ {scan.matchedKeywords.length} verified
                       </span>
-                      <span className="text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md font-semibold">
+                      <span className="text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md font-semibold text-[11px]">
                         ? {scan.missingKeywords.length} unconfirmed
                       </span>
-                      <span className="text-[#626262] bg-[#F8FAFC] border border-[#E8E8E8] px-2 py-0.5 rounded-md">
+                      <span className="text-[#626262] bg-[#F8FAFC] border border-[#E8E8E8] px-2 py-0.5 rounded-md text-[11px]">
                         ✕ {scan.unsupportedMissingKeywords.length} gaps
                       </span>
                     </div>
@@ -113,7 +116,7 @@ export default async function HistoryPage() {
 
                   <Link
                     href={`/dashboard/resumes/${scan.resumeId}/optimize`}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#2996F3] hover:bg-[#147DD8] text-xs font-semibold text-white shadow-sm shadow-blue-500/20 transition-all active:scale-[0.99]"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#2996F3] hover:bg-[#147DD8] text-xs font-semibold text-white shadow-xs transition-all active:scale-[0.99]"
                   >
                     <span>Optimize</span>
                     <ArrowRight className="h-3.5 w-3.5" />

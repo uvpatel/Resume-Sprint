@@ -1,31 +1,40 @@
 "use client"
 
+import Link from "next/link"
+import Image from "next/image"
 import { SignupForm } from "@/components/signup-form"
-import { GalleryVerticalEndIcon } from "lucide-react"
 
 export default function SignupPage() {
   return (
-    <div className="grid min-h-svh lg:grid-cols-2">
-      <div className="flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
-          <a href="#" className="flex items-center gap-2 font-medium">
-            <div className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <GalleryVerticalEndIcon className="size-4" />
+    <div className="grid min-h-svh lg:grid-cols-2 bg-white text-[#252525]">
+      <div className="flex flex-col gap-4 p-6 md:p-10 justify-between">
+        <div className="flex justify-center md:justify-start">
+          <Link href="/" className="flex items-center gap-2.5 font-bold tracking-tight text-[#252525]">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#2996F3] to-[#147DD8] shadow-sm shadow-blue-500/20 text-white font-mono text-xs font-black">
+              RS
             </div>
-            ResumeSprint
-          </a>
+            <span className="text-lg">
+              Resume<span className="font-semibold">Sprint</span>
+            </span>
+          </Link>
         </div>
-        <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
+        <div className="flex flex-1 items-center justify-center py-8">
+          <div className="w-full max-w-sm">
             <SignupForm />
           </div>
         </div>
+        <div className="text-center md:text-left text-xs text-[#9CA3AF]">
+          © {new Date().getFullYear()} ResumeSprint. Evidence-based resume optimization.
+        </div>
       </div>
-      <div className="relative hidden bg-muted lg:block">
-        <img
+      <div className="relative hidden bg-[#F8FAFC] border-l border-[#E8E8E8] lg:block">
+        <Image
           src="/login/resume.png"
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+          alt="ResumeSprint workspace illustration"
+          fill
+          priority
+          sizes="(min-width: 1024px) 50vw, 0vw"
+          className="object-cover"
         />
       </div>
     </div>
