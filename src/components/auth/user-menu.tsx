@@ -53,64 +53,64 @@ export function UserMenu({ user }: UserMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="flex items-center gap-2 rounded-full p-0.5 outline-none focus-visible:ring-2 focus-visible:ring-[#2996F3] transition-opacity hover:opacity-90 cursor-pointer"
+        className="flex items-center gap-2 rounded-full p-0.5 outline-none focus-visible:ring-2 focus-visible:ring-primary transition-opacity hover:opacity-90 cursor-pointer"
         aria-label="User account menu"
       >
-        <Avatar className="h-8 w-8 border border-[#E8E8E8]">
+        <Avatar className="h-7 w-7 border border-border">
           {user.image && <AvatarImage src={user.image} alt={displayName} />}
-          <AvatarFallback className="bg-[#EAF4FF] text-[#2996F3] text-xs font-bold">
+          <AvatarFallback className="bg-primary/10 text-primary text-[11px] font-bold">
             {initials}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-56 p-1.5 shadow-lg border border-[#E8E8E8] bg-white">
+      <DropdownMenuContent align="end" className="w-56 p-1.5 shadow-xl border border-border bg-popover text-popover-foreground">
         <DropdownMenuLabel className="font-normal px-2 py-1.5">
           <div className="flex flex-col space-y-0.5">
-            <p className="text-sm font-semibold text-[#252525] truncate">{displayName}</p>
+            <p className="text-[13px] font-medium text-foreground truncate">{displayName}</p>
             {userEmail && (
-              <p className="text-xs text-[#626262] font-mono truncate">{userEmail}</p>
+              <p className="text-[11px] text-muted-foreground font-mono truncate">{userEmail}</p>
             )}
           </div>
         </DropdownMenuLabel>
 
-        <DropdownMenuSeparator className="bg-[#E8E8E8] my-1" />
+        <DropdownMenuSeparator className="bg-border my-1" />
 
         <DropdownMenuItem
           onClick={() => router.push("/dashboard")}
-          className="flex items-center gap-2 px-2 py-1.5 text-xs text-[#252525] hover:bg-[#F8FAFC] rounded cursor-pointer"
+          className="flex items-center gap-2 px-2 py-1.5 text-[12px] text-foreground hover:bg-accent rounded-md cursor-pointer transition-colors"
         >
-          <LayoutDashboard className="h-4 w-4 text-[#626262]" />
+          <LayoutDashboard className="h-3.5 w-3.5 text-muted-foreground" />
           <span>Dashboard</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem
           onClick={() => router.push("/dashboard/resumes")}
-          className="flex items-center gap-2 px-2 py-1.5 text-xs text-[#252525] hover:bg-[#F8FAFC] rounded cursor-pointer"
+          className="flex items-center gap-2 px-2 py-1.5 text-[12px] text-foreground hover:bg-accent rounded-md cursor-pointer transition-colors"
         >
-          <FileText className="h-4 w-4 text-[#626262]" />
+          <FileText className="h-3.5 w-3.5 text-muted-foreground" />
           <span>My Resumes</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem
           onClick={() => router.push("/dashboard/settings")}
-          className="flex items-center gap-2 px-2 py-1.5 text-xs text-[#252525] hover:bg-[#F8FAFC] rounded cursor-pointer"
+          className="flex items-center gap-2 px-2 py-1.5 text-[12px] text-foreground hover:bg-accent rounded-md cursor-pointer transition-colors"
         >
-          <Settings className="h-4 w-4 text-[#626262]" />
+          <Settings className="h-3.5 w-3.5 text-muted-foreground" />
           <span>Settings</span>
         </DropdownMenuItem>
 
-        <DropdownMenuSeparator className="bg-[#E8E8E8] my-1" />
+        <DropdownMenuSeparator className="bg-border my-1" />
 
         <DropdownMenuItem
           onClick={handleSignOut}
           disabled={signingOut}
-          className="flex items-center gap-2 px-2 py-1.5 text-xs text-red-600 hover:bg-red-50 hover:text-red-700 rounded cursor-pointer focus:bg-red-50 focus:text-red-700"
+          className="flex items-center gap-2 px-2 py-1.5 text-[12px] text-destructive hover:bg-destructive/10 rounded-md cursor-pointer focus:bg-destructive/10 transition-colors"
         >
           {signingOut ? (
-            <Loader2 className="h-4 w-4 animate-spin text-red-600" />
+            <Loader2 className="h-3.5 w-3.5 animate-spin text-destructive" />
           ) : (
-            <LogOut className="h-4 w-4 text-red-600" />
+            <LogOut className="h-3.5 w-3.5 text-destructive" />
           )}
           <span>{signingOut ? "Signing out..." : "Sign Out"}</span>
         </DropdownMenuItem>

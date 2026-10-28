@@ -83,7 +83,7 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-.dark, [data-theme="dark"], .dashboard-theme {
+.dark, [data-theme="dark"] {
   --background: #08090a;
   --foreground: #f7f8f8;
 
@@ -127,6 +127,53 @@
   --chart-3: #10b981;
   --chart-4: #f59e0b;
   --chart-5: #ec4899;
+}
+
+.dashboard-theme {
+  --background: #F8FAFC;
+  --foreground: #252525;
+
+  --card: #FFFFFF;
+  --card-foreground: #252525;
+
+  --popover: #FFFFFF;
+  --popover-foreground: #252525;
+
+  --primary: #2996F3;
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #F8FAFC;
+  --secondary-foreground: #252525;
+
+  --muted: #F8FAFC;
+  --muted-foreground: #626262;
+
+  --accent: #EAF4FF;
+  --accent-foreground: #147DD8;
+
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+
+  --border: #E8E8E8;
+  --input: #FFFFFF;
+  --ring: #2996F3;
+
+  --radius: 0.625rem;
+
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #252525;
+  --sidebar-primary: #2996F3;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #EAF4FF;
+  --sidebar-accent-foreground: #147DD8;
+  --sidebar-border: #E8E8E8;
+  --sidebar-ring: #2996F3;
+
+  --chart-1: #2996F3;
+  --chart-2: #147DD8;
+  --chart-3: #10B981;
+  --chart-4: #F59E0B;
+  --chart-5: #6366F1;
 }
 
 @layer base {

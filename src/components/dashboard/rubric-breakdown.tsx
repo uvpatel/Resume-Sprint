@@ -46,18 +46,18 @@ export function RubricBreakdown({ breakdown }: RubricBreakdownProps) {
         return (
           <div key={p.title} className="space-y-1.5">
             <div className="flex items-center justify-between text-xs">
-              <span className="font-semibold text-zinc-800">{p.title}</span>
-              <span className="font-mono font-medium text-zinc-600">
-                <b className="text-zinc-900">{p.value}</b> / {p.max}
+              <span className="font-semibold text-[#252525]">{p.title}</span>
+              <span className="font-mono text-[#626262]">
+                <b className="text-[#252525]">{p.value}</b> / {p.max}
               </span>
             </div>
-            <div className="h-2 w-full rounded-full bg-zinc-100 overflow-hidden">
+            <div className="h-2 w-full rounded-full bg-[#E8E8E8] overflow-hidden">
               <div
-                className="h-full rounded-full bg-blue-600 transition-all duration-500 ease-out"
+                className="h-full rounded-full bg-[#2996F3] transition-all duration-500 ease-out"
                 style={{ width: `${percent}%` }}
               />
             </div>
-            <p className="text-[11px] text-zinc-500 leading-normal">{p.description}</p>
+            <p className="text-[11px] text-[#626262] leading-normal">{p.description}</p>
           </div>
         );
       })}

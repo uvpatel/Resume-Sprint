@@ -22,10 +22,20 @@ export function LoginForm({
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+  const urlError = searchParams.get("error");
 
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(() => {
+    if (!urlError) return null;
+    if (urlError === "internal_server_error") {
+      return "An unexpected error occurred during authentication. Please try again.";
+    }
+    if (urlError === "access_denied") {
+      return "Access was denied by GitHub. Please authorize ResumeSprint to continue.";
+    }
+    return `Authentication notice: ${urlError}`;
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

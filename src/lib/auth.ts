@@ -7,31 +7,59 @@ import { ApiError } from "@/lib/errors/api-error";
 import { getResumeById } from "@/lib/db/repository";
 import { ScanSessionRepository } from "@/server/persistence/repository";
 
+// Persist plain in-memory store on globalThis so it survives hot-reloads and module re-evaluations.
+// Note: Must remain a plain object (no Proxy) so structuredClone in memoryAdapter transactions succeeds.
+declare global {
+  // eslint-disable-next-line no-var
+  var _betterAuthMemoryDb: Record<string, any[]> | undefined;
+}
+
+const defaultModels = [
+  "user",
+  "session",
+  "account",
+  "verification",
+  "rateLimit",
+  "jwks",
+  "key",
+  "twoFactor",
+  "invitation",
+  "member",
+  "organization",
+  "passkey",
+];
+
+if (!global._betterAuthMemoryDb) {
+  const store: Record<string, any[]> = {};
+  for (const m of defaultModels) {
+    store[m] = [];
+  }
+  global._betterAuthMemoryDb = store;
+}
+
+function ensureModelExists(model?: any) {
+  if (typeof model === "string" && global._betterAuthMemoryDb && !global._betterAuthMemoryDb[model]) {
+    global._betterAuthMemoryDb[model] = [];
+  }
+}
+
+const fallbackAdapterFactory = memoryAdapter(global._betterAuthMemoryDb!);
+const primaryAdapterFactory = mongodbAdapter(mongoDb);
+
 // Shared resilient database adapter
 function getResilientDatabaseAdapter() {
-  const fallbackAdapter = memoryAdapter({});
-  const primaryAdapter = mongodbAdapter(mongoDb);
-
   return (options: any) => {
-    const fallback = fallbackAdapter(options);
+    const fallback: any = fallbackAdapterFactory(options);
     let primary: any;
-
-    const getTarget = () => {
-      if (!isMongoConnected()) {
-        return fallback;
-      }
-      if (!primary) {
-        try {
-          primary = primaryAdapter(options);
-        } catch {
-          return fallback;
-        }
-      }
-      return primary;
-    };
+    try {
+      primary = primaryAdapterFactory(options);
+    } catch {
+      // primary creation deferred
+    }
 
     const resilient: any = { ...fallback };
     const methodNames = [
+      "transaction",
       "create",
       "findOne",
       "findMany",
@@ -47,17 +75,29 @@ function getResilientDatabaseAdapter() {
 
     for (const key of methodNames) {
       resilient[key] = async (...args: any[]) => {
-        const target = getTarget();
-        try {
-          if (typeof target[key] === "function") {
-            return await target[key](...args);
-          }
+        const isTestEnv = process.env.NODE_ENV === "test" && !process.env.USE_LIVE_MONGO;
+        
+        // In test mode without live Mongo, use fast in-memory store
+        if (isTestEnv || !primary) {
+          ensureModelExists(args[0]?.model);
           return await fallback[key](...args);
-        } catch (_err) {
+        }
+
+        // In production and dev, use primary MongoDB adapter (buffered by driver until connected)
+        try {
+          if (typeof primary[key] === "function") {
+            return await primary[key](...args);
+          }
+          ensureModelExists(args[0]?.model);
+          return await fallback[key](...args);
+        } catch (err: any) {
+          // If primary throws (e.g. Mongo network timeout), fallback safely to memory store
+          console.warn(`[Better Auth Adapter] Primary ${key} failed, falling back to memory:`, err?.message);
+          ensureModelExists(args[0]?.model);
           if (typeof fallback[key] === "function") {
             return await fallback[key](...args);
           }
-          throw _err;
+          throw err;
         }
       };
     }
@@ -75,6 +115,9 @@ export const auth = betterAuth({
   },
   secret: process.env.BETTER_AUTH_SECRET || "TVadAQcvCZpuDF7NQcDA9ZPr7zOUq50S",
   baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  logger: {
+    level: "debug",
+  },
   session: {
     cookieCache: {
       enabled: true,

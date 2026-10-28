@@ -25,9 +25,9 @@ export default async function ResumeDetailPage({
   // Ownership verification
   if (resume.userId !== user.id) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center">
-        <h2 className="text-base font-semibold text-red-900">Access Restricted</h2>
-        <p className="text-xs text-red-700 mt-1">
+      <div className="rounded-xl border border-rose-200 bg-rose-50 p-6 text-center">
+        <h2 className="text-base font-semibold text-rose-700">Access Restricted</h2>
+        <p className="text-xs text-rose-600 mt-1">
           You do not have permission to view this resume document.
         </p>
       </div>
@@ -37,27 +37,27 @@ export default async function ResumeDetailPage({
   const scan = await getLatestScanByResumeId(id);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-200 pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E8E8E8] pb-6">
         <div>
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-[11px] font-mono font-medium text-blue-700 mb-2">
-            <Database className="h-3 w-3" />
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-[#2996F3]/20 bg-[#EAF4FF] px-3 py-1 text-xs font-semibold text-[#147DD8] mb-2">
+            <Database className="h-3.5 w-3.5 text-[#2996F3]" />
             <span>AUTHENTIC EVIDENCE INVENTORY</span>
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#252525]">
             {resume.originalFileName}
           </h1>
-          <p className="text-xs text-zinc-500 mt-1">
-            Reconciled document facts and protected values used for verification and 100% preservation gating.
+          <p className="text-sm text-[#626262] mt-1">
+            Reconciled document facts and protected values used for 100% preservation gating.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           {scan ? (
             <Link
               href={`/dashboard/resumes/${id}/scan`}
-              className="inline-flex items-center gap-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-semibold shadow-xs transition-colors active:scale-95"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#2996F3] hover:bg-[#147DD8] text-white px-4 py-2 text-sm font-semibold shadow-sm shadow-blue-500/20 transition-all active:scale-[0.99]"
             >
               <span>View Scan Report ({scan.score}%)</span>
               <ArrowRight className="h-4 w-4" />
@@ -65,7 +65,7 @@ export default async function ResumeDetailPage({
           ) : (
             <Link
               href="/dashboard/new"
-              className="inline-flex items-center gap-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs font-semibold shadow-xs transition-colors active:scale-95"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#2996F3] hover:bg-[#147DD8] text-white px-4 py-2 text-sm font-semibold shadow-sm shadow-blue-500/20 transition-all active:scale-[0.99]"
             >
               <span>Scan Against Job Description</span>
               <ArrowRight className="h-4 w-4" />
@@ -76,88 +76,88 @@ export default async function ResumeDetailPage({
 
       {/* Metadata Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-xs">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block mb-1">
+        <div className="rounded-xl border border-[#E8E8E8] bg-white p-4 shadow-xs">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#9CA3AF] block mb-1">
             Format & Size
           </span>
-          <span className="text-sm font-semibold text-zinc-900 uppercase">
+          <span className="text-sm font-bold text-[#252525] uppercase">
             {resume.fileType} · {(resume.fileSize / 1024).toFixed(1)} KB
           </span>
         </div>
 
-        <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-xs">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block mb-1">
+        <div className="rounded-xl border border-[#E8E8E8] bg-white p-4 shadow-xs">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#9CA3AF] block mb-1">
             Coverage Status
           </span>
-          <span className="text-sm font-semibold text-emerald-700 flex items-center gap-1">
-            <CheckCircle2 className="h-4 w-4" />
+          <span className="text-sm font-bold text-emerald-600 flex items-center gap-1.5">
+            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
             <span>Complete ({resume.sourceCoverage.processedPages}p)</span>
           </span>
         </div>
 
-        <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-xs">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block mb-1">
+        <div className="rounded-xl border border-[#E8E8E8] bg-white p-4 shadow-xs">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#9CA3AF] block mb-1">
             Inventory Units
           </span>
-          <span className="text-sm font-semibold text-zinc-900">
+          <span className="text-sm font-bold text-[#252525]">
             {resume.blocks.length} blocks · {resume.facts.length} facts
           </span>
         </div>
 
-        <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-xs">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block mb-1">
+        <div className="rounded-xl border border-[#E8E8E8] bg-white p-4 shadow-xs">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#9CA3AF] block mb-1">
             Provenance SHA-256
           </span>
-          <span className="text-xs font-mono text-zinc-600 truncate block">
+          <span className="text-xs font-mono text-[#626262] truncate block">
             {resume.sourceFileSha256.slice(0, 16)}...
           </span>
         </div>
       </div>
 
       {/* Atomic Facts Inventory Table */}
-      <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-xs space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
+      <div className="rounded-xl border border-[#E8E8E8] bg-white p-5 sm:p-6 space-y-4 shadow-xs">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E8E8E8]">
           <div>
-            <h3 className="text-sm font-semibold text-zinc-900">
+            <h3 className="text-sm font-bold text-[#252525]">
               Atomic Fact Inventory
             </h3>
-            <p className="text-xs text-zinc-500 mt-0.5">
+            <p className="text-xs text-[#626262] mt-0.5">
               Extracted factual units with exact provenance spans and protected fields.
             </p>
           </div>
-          <span className="text-xs font-mono text-zinc-400">
+          <span className="text-xs font-mono font-medium text-[#626262]">
             {resume.facts.length} facts registered
           </span>
         </div>
 
-        <div className="divide-y divide-zinc-100 max-h-[500px] overflow-y-auto">
+        <div className="divide-y divide-[#E8E8E8] max-h-[500px] overflow-y-auto pr-1">
           {resume.facts.map((fact) => (
-            <div key={fact.factId} className="py-3 text-xs space-y-1.5">
+            <div key={fact.factId} className="py-3.5 text-xs space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="rounded-md bg-zinc-100 px-2 py-0.5 text-[10px] font-mono font-medium text-zinc-700">
+                  <span className="rounded-md bg-[#F8FAFC] border border-[#E8E8E8] px-2 py-0.5 text-[11px] font-mono font-bold text-[#252525]">
                     {fact.section}
                   </span>
-                  <span className="rounded-md bg-blue-50 text-blue-700 px-1.5 py-0.5 text-[10px] font-mono font-semibold">
+                  <span className="rounded-md bg-[#EAF4FF] border border-[#2996F3]/20 text-[#147DD8] px-2 py-0.5 text-[11px] font-mono font-semibold">
                     {fact.kind}
                   </span>
                 </div>
-                <span className="text-[10px] font-mono text-zinc-400">
+                <span className="text-[11px] font-mono text-[#9CA3AF]">
                   {fact.factId}
                 </span>
               </div>
 
-              <p className="text-zinc-800 leading-relaxed font-sans">
+              <p className="text-[#252525] text-sm leading-relaxed font-sans">
                 {fact.exactText}
               </p>
 
               {fact.protectedValues && fact.protectedValues.length > 0 && (
-                <div className="flex items-center gap-1.5 pt-0.5">
-                  <span className="text-[10px] text-zinc-400 font-mono">Protected values:</span>
+                <div className="flex items-center gap-1.5 pt-1">
+                  <span className="text-[11px] text-[#9CA3AF] font-mono">Protected values:</span>
                   {fact.protectedValues.map((v, i) => (
                     <span
                       key={i}
-                      className="rounded bg-amber-50 border border-amber-200 text-amber-800 text-[10px] font-mono px-1.5 py-0.2"
+                      className="rounded-md bg-amber-50 border border-amber-200 text-amber-700 text-[11px] font-mono font-semibold px-2 py-0.5"
                     >
                       {v}
                     </span>
