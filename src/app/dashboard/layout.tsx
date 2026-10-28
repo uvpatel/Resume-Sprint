@@ -18,16 +18,16 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50/60 text-zinc-900 flex antialiased">
+    <div className="dashboard-theme dark min-h-screen bg-[#08090a] text-[#f7f8f8] flex antialiased selection:bg-[#5e6ad2]/30 selection:text-white">
       {/* Sidebar (Desktop) */}
       <div className="hidden md:block">
         <DashboardSidebar userEmail={user.email} userName={user.name} />
       </div>
 
       {/* Main Column */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 bg-[#08090a]">
         <DashboardHeader userEmail={user.email} userName={user.name} />
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1200px] w-full mx-auto">
           {children}
         </main>
       </div>
