@@ -1,10 +1,13 @@
-"use client"
+"use client";
 
+import * as React from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/ui/avatar"
+} from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,95 +16,131 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
-import { EllipsisVerticalIcon, CircleUserRoundIcon, CreditCardIcon, BellIcon, LogOutIcon } from "lucide-react"
+} from "@/components/ui/sidebar";
+import {
+  EllipsisVerticalIcon,
+  CircleUserRoundIcon,
+  Settings2Icon,
+  ShieldCheckIcon,
+  LogOutIcon,
+  ChevronDown,
+  LayoutDashboard,
+} from "lucide-react";
 
 export function NavUser({
   user,
 }: {
   user: {
-    name: string
-    email: string
-    avatar: string
-  }
+    name?: string;
+    email?: string;
+    avatar?: string;
+  };
 }) {
-  const { isMobile } = useSidebar()
+  const { isMobile } = useSidebar();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      router.push("/login");
+    } catch {
+      router.push("/login");
+    }
+  };
+
+  const name = user.name || "Candidate";
+  const email = user.email || "candidate@resumesprint.io";
+  const initials = name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .substring(0, 2)
+    .toUpperCase();
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
-              <SidebarMenuButton size="lg" className="aria-expanded:bg-muted" />
+              <SidebarMenuButton
+                size="lg"
+                className="aria-expanded:bg-slate-100 dark:aria-expanded:bg-zinc-800 hover:bg-slate-100/80 dark:hover:bg-zinc-800/80 text-slate-700 dark:text-zinc-200 rounded-xl px-2.5 py-2 h-auto transition-colors"
+              />
             }
           >
-            <Avatar className="size-8 rounded-lg grayscale">
-              <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+            <Avatar className="size-8.5 rounded-full bg-indigo-600 border border-indigo-200 dark:border-indigo-950 text-white font-bold">
+              {user.avatar && <AvatarImage src={user.avatar} alt={name} />}
+              <AvatarFallback className="rounded-full bg-indigo-600 text-white text-xs font-semibold">
+                {initials}
+              </AvatarFallback>
             </Avatar>
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{user.name}</span>
-              <span className="truncate text-xs text-foreground/70">
-                {user.email}
+            <div className="grid flex-1 text-left text-xs leading-tight ml-1">
+              <span className="truncate font-semibold text-slate-800 dark:text-white">{name}</span>
+              <span className="truncate text-[11px] text-slate-400 dark:text-zinc-400">
+                {email}
               </span>
             </div>
-            <EllipsisVerticalIcon className="ml-auto size-4" />
+            <ChevronDown className="ml-auto size-4 text-slate-400 dark:text-zinc-500" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="min-w-56"
+            className="min-w-56 bg-white dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 text-slate-800 dark:text-zinc-200 shadow-xl rounded-xl"
             side={isMobile ? "bottom" : "right"}
             align="end"
-            sideOffset={4}
+            sideOffset={6}
           >
             <DropdownMenuGroup>
               <DropdownMenuLabel className="p-0 font-normal">
-                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <Avatar className="size-8">
-                    <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <div className="flex items-center gap-2 px-2.5 py-2 text-left text-xs">
+                  <Avatar className="size-8 rounded-full bg-indigo-600 text-white font-semibold">
+                    {user.avatar && <AvatarImage src={user.avatar} alt={name} />}
+                    <AvatarFallback className="rounded-full bg-indigo-600 text-white text-xs">
+                      {initials}
+                    </AvatarFallback>
                   </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">{user.name}</span>
-                    <span className="truncate text-xs text-muted-foreground">
-                      {user.email}
+                  <div className="grid flex-1 text-left text-xs leading-tight">
+                    <span className="truncate font-semibold text-slate-900 dark:text-white">{name}</span>
+                    <span className="truncate text-[11px] text-slate-400 dark:text-zinc-400">
+                      {email}
                     </span>
                   </div>
                 </div>
               </DropdownMenuLabel>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator className="bg-slate-100 dark:bg-zinc-800" />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <CircleUserRoundIcon
-                />
-                Account
+              <DropdownMenuItem
+                render={<Link href="/dashboard" />}
+                className="hover:bg-slate-100 dark:hover:bg-zinc-800 text-xs cursor-pointer py-2 px-2.5"
+              >
+                <LayoutDashboard className="mr-2 size-3.5 text-slate-500" />
+                <span>Dashboard</span>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCardIcon
-                />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <BellIcon
-                />
-                Notifications
+              <DropdownMenuItem
+                render={<Link href="/dashboard/settings" />}
+                className="hover:bg-slate-100 dark:hover:bg-zinc-800 text-xs cursor-pointer py-2 px-2.5"
+              >
+                <Settings2Icon className="mr-2 size-3.5 text-slate-500" />
+                <span>Settings</span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOutIcon
-              />
-              Log out
+            <DropdownMenuSeparator className="bg-slate-100 dark:bg-zinc-800" />
+            <DropdownMenuItem
+              onClick={handleSignOut}
+              className="text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs cursor-pointer py-2 px-2.5"
+            >
+              <LogOutIcon className="mr-2 size-3.5" />
+              <span>Log out</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

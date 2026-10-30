@@ -6,13 +6,14 @@ import { signOut } from "@/lib/auth-client";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LogOut, LayoutDashboard, FileText, Settings, Loader2 } from "lucide-react";
+import { LogOut, LayoutDashboard, FileText, Settings, Loader2, ChevronDown } from "lucide-react";
 
 interface UserMenuProps {
   user: {
@@ -21,9 +22,10 @@ interface UserMenuProps {
     email?: string | null;
     image?: string | null;
   };
+  showName?: boolean;
 }
 
-export function UserMenu({ user }: UserMenuProps) {
+export function UserMenu({ user, showName = false }: UserMenuProps) {
   const router = useRouter();
   const [signingOut, setSigningOut] = useState(false);
 
@@ -53,26 +55,36 @@ export function UserMenu({ user }: UserMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="flex items-center gap-2 rounded-full p-0.5 outline-none focus-visible:ring-2 focus-visible:ring-primary transition-opacity hover:opacity-90 cursor-pointer"
+        className="flex items-center gap-2 rounded-full p-1 outline-none hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer group"
         aria-label="User account menu"
       >
-        <Avatar className="h-7 w-7 border border-border">
+        <Avatar className="h-8 w-8 border border-indigo-200 dark:border-indigo-950">
           {user.image && <AvatarImage src={user.image} alt={displayName} />}
-          <AvatarFallback className="bg-primary/10 text-primary text-[11px] font-bold">
+          <AvatarFallback className="bg-indigo-600 text-white text-[11px] font-bold">
             {initials}
           </AvatarFallback>
         </Avatar>
+        {showName && (
+          <div className="hidden sm:flex items-center gap-1.5 text-left">
+            <span className="text-xs font-semibold text-slate-800 dark:text-zinc-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+              {displayName}
+            </span>
+            <ChevronDown className="h-3.5 w-3.5 text-slate-400 dark:text-zinc-500" />
+          </div>
+        )}
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-56 p-1.5 shadow-xl border border-border bg-popover text-popover-foreground">
-        <DropdownMenuLabel className="font-normal px-2 py-1.5">
-          <div className="flex flex-col space-y-0.5">
-            <p className="text-[13px] font-medium text-foreground truncate">{displayName}</p>
-            {userEmail && (
-              <p className="text-[11px] text-muted-foreground font-mono truncate">{userEmail}</p>
-            )}
-          </div>
-        </DropdownMenuLabel>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="font-normal px-2 py-1.5">
+            <div className="flex flex-col space-y-0.5">
+              <p className="text-[13px] font-medium text-foreground truncate">{displayName}</p>
+              {userEmail && (
+                <p className="text-[11px] text-muted-foreground font-mono truncate">{userEmail}</p>
+              )}
+            </div>
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
 
         <DropdownMenuSeparator className="bg-border my-1" />
 

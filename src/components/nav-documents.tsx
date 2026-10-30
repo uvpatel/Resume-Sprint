@@ -1,88 +1,52 @@
-"use client"
+"use client";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import * as React from "react";
+import Link from "next/link";
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
-} from "@/components/ui/sidebar"
-import { MoreHorizontalIcon, FolderIcon, ShareIcon, Trash2Icon } from "lucide-react"
+} from "@/components/ui/sidebar";
+import { FolderIcon, MoreHorizontalIcon } from "lucide-react";
 
 export function NavDocuments({
   items,
 }: {
   items: {
-    name: string
-    url: string
-    icon: React.ReactNode
-  }[]
+    name: string;
+    url: string;
+    icon?: React.ReactNode;
+  }[];
 }) {
-  const { isMobile } = useSidebar()
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Documents</SidebarGroupLabel>
+      <SidebarGroupLabel className="text-zinc-500 uppercase text-[10px] tracking-wider font-bold">
+        Documents & Inventory
+      </SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton render={<a href={item.url} />}>
-              {item.icon}
-              <span>{item.name}</span>
+            <SidebarMenuButton
+              render={<Link href={item.url} />}
+              className="text-zinc-400 hover:text-white hover:bg-zinc-800/60"
+            >
+              {item.icon || <FolderIcon className="size-4" />}
+              <span className="truncate">{item.name}</span>
             </SidebarMenuButton>
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <SidebarMenuAction
-                    showOnHover
-                    className="aria-expanded:bg-muted"
-                  />
-                }
-              >
-                <MoreHorizontalIcon
-                />
-                <span className="sr-only">More</span>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-24"
-                side={isMobile ? "bottom" : "right"}
-                align={isMobile ? "end" : "start"}
-              >
-                <DropdownMenuItem>
-                  <FolderIcon
-                  />
-                  <span>Open</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <ShareIcon
-                  />
-                  <span>Share</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem variant="destructive">
-                  <Trash2Icon
-                  />
-                  <span>Delete</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </SidebarMenuItem>
         ))}
         <SidebarMenuItem>
-          <SidebarMenuButton className="text-sidebar-foreground/70">
-            <MoreHorizontalIcon className="text-sidebar-foreground/70" />
-            <span>More</span>
+          <SidebarMenuButton
+            render={<Link href="/dashboard/resumes" />}
+            className="text-zinc-500 hover:text-zinc-300"
+          >
+            <MoreHorizontalIcon className="size-4" />
+            <span>All Documents</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }

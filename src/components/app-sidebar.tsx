@@ -1,11 +1,9 @@
-"use client"
+"use client";
 
-import * as React from "react"
-
-import { NavDocuments } from "@/components/nav-documents"
-import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+import * as React from "react";
+import Link from "next/link";
+import { NavMain } from "@/components/nav-main";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -14,191 +12,124 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { LayoutDashboardIcon, ListIcon, ChartBarIcon, FolderIcon, UsersIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, SearchIcon, DatabaseIcon, FileChartColumnIcon, FileIcon, CommandIcon } from "lucide-react"
+} from "@/components/ui/sidebar";
+import {
+  LayoutDashboard,
+  Upload,
+  FileText,
+  History,
+  Settings,
+} from "lucide-react";
 
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  user?: {
+    name?: string;
+    email?: string;
+    avatar?: string;
+  };
+  resumes?: {
+    id: string;
+    originalFileName: string;
+    fileType: string;
+  }[];
+}
+
+export function AppSidebar({ user, resumes = [], ...props }: AppSidebarProps) {
+  const navMainItems = [
     {
       title: "Dashboard",
-      url: "#",
-      icon: (
-        <LayoutDashboardIcon
-        />
-      ),
+      url: "/dashboard",
+      icon: <LayoutDashboard className="size-4" />,
     },
     {
-      title: "Lifecycle",
-      url: "#",
-      icon: (
-        <ListIcon
-        />
-      ),
+      title: "Upload Resume",
+      url: "/dashboard/new",
+      icon: <Upload className="size-4" />,
     },
     {
-      title: "Analytics",
-      url: "#",
-      icon: (
-        <ChartBarIcon
-        />
-      ),
+      title: "My Resumes",
+      url: "/dashboard/resumes",
+      icon: <FileText className="size-4" />,
     },
     {
-      title: "Projects",
-      url: "#",
-      icon: (
-        <FolderIcon
-        />
-      ),
+      title: "Analysis History",
+      url: "/dashboard/history",
+      icon: <History className="size-4" />,
     },
-    {
-      title: "Team",
-      url: "#",
-      icon: (
-        <UsersIcon
-        />
-      ),
-    },
-  ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: (
-        <CameraIcon
-        />
-      ),
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: (
-        <FileTextIcon
-        />
-      ),
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: (
-        <FileTextIcon
-        />
-      ),
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  navSecondary: [
     {
       title: "Settings",
-      url: "#",
-      icon: (
-        <Settings2Icon
-        />
-      ),
+      url: "/dashboard/settings",
+      icon: <Settings className="size-4" />,
     },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: (
-        <CircleHelpIcon
-        />
-      ),
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: (
-        <SearchIcon
-        />
-      ),
-    },
-  ],
-  documents: [
-    {
-      name: "Data Library",
-      url: "#",
-      icon: (
-        <DatabaseIcon
-        />
-      ),
-    },
-    {
-      name: "Reports",
-      url: "#",
-      icon: (
-        <FileChartColumnIcon
-        />
-      ),
-    },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: (
-        <FileIcon
-        />
-      ),
-    },
-  ],
-}
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  ];
+
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
-      <SidebarHeader>
+    <Sidebar
+      collapsible="icon"
+      className="border-r border-sidebar-border bg-sidebar text-sidebar-foreground"
+      {...props}
+    >
+      <SidebarHeader className="border-b border-sidebar-border px-3.5 py-3">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              className="data-[slot=sidebar-menu-button]:p-1.5!"
-              render={<a href="#" />}
+              size="lg"
+              render={<Link href="/dashboard" />}
+              className="hover:bg-muted/60 transition-colors h-auto p-1.5"
             >
-              <CommandIcon className="size-5!" />
-              <span className="text-base font-semibold">Acme Inc.</span>
+              {/* Origami paper-plane brand mark */}
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="size-4.5"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M3 13.5L21 3L13.5 21L10.5 13.5L3 13.5Z"
+                    fill="currentColor"
+                  />
+                  <path
+                    d="M10.5 13.5L21 3L13.5 21"
+                    stroke="white"
+                    strokeWidth="0.75"
+                    strokeLinejoin="round"
+                    className="opacity-40"
+                  />
+                </svg>
+              </div>
+
+              <div className="flex flex-col text-left leading-tight ml-2">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-bold text-foreground text-sm tracking-tight font-sans">
+                    ResumeSprint
+                  </span>
+                  <span className="text-[10px] font-mono text-muted-foreground uppercase">
+                    v1.0
+                  </span>
+                </div>
+                <span className="text-[11px] text-muted-foreground font-normal">
+                  Evidence Engine
+                </span>
+              </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+
+      <SidebarContent className="px-2 py-3">
+        <NavMain items={navMainItems} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
+
+      <SidebarFooter className="border-t border-sidebar-border p-2">
+        <NavUser
+          user={{
+            name: user?.name || "Candidate",
+            email: user?.email || "candidate@resumesprint.io",
+            avatar: user?.avatar || "",
+          }}
+        />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

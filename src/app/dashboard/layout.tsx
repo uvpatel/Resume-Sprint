@@ -1,8 +1,10 @@
 import { getCurrentUser } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
-import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
-import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { getResumesByUserId } from "@/lib/db/repository";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+import { SiteHeader } from "@/components/site-header";
 
 export default async function DashboardLayout({
   children,
@@ -17,20 +19,29 @@ export default async function DashboardLayout({
     redirect(`/login?callbackUrl=${encodeURIComponent(currentPath)}`);
   }
 
-  return (
-    <div className="dashboard-theme min-h-screen bg-[#F8FAFC] text-[#252525] flex flex-col md:flex-row antialiased selection:bg-[#EAF4FF] selection:text-[#147DD8]">
-      {/* Sidebar Navigation (Desktop) - 250px refined compact sidebar */}
-      <div className="hidden md:block shrink-0">
-        <DashboardSidebar userEmail={user.email} userName={user.name} />
-      </div>
+  const resumes = await getResumesByUserId(user.id);
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC]">
-        <DashboardHeader userEmail={user.email} userName={user.name} />
-        <main className="flex-1 px-4 sm:px-6 lg:px-8 xl:px-10 py-6 sm:py-8 w-full">
-          {children}
-        </main>
-      </div>
+  return (
+    <div className="min-h-screen bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary">
+      <SidebarProvider defaultOpen={true}>
+        <AppSidebar
+          user={{
+            name: user.name,
+            email: user.email,
+          }}
+          resumes={resumes.map((r) => ({
+            id: r.id,
+            originalFileName: r.originalFileName,
+            fileType: r.fileType,
+          }))}
+        />
+        <SidebarInset className="bg-background flex flex-col min-w-0">
+          <SiteHeader user={{ name: user.name, email: user.email }} />
+          <main className="flex-1 px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full max-w-[1440px] mx-auto">
+            {children}
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
     </div>
   );
 }
