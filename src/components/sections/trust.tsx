@@ -26,9 +26,9 @@ export function Trust() {
     <section className="relative border-t border-[#E8E8E8] py-20 sm:py-28 bg-[#F4F8FD]">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center mb-14 sm:mb-18">
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-[#D6EBFF] bg-[#EAF4FF] px-3.5 py-1 text-xs font-mono font-semibold text-[#147DD8] mb-4">
-            <span>FACT PRESERVATION FIRST</span>
-          </div>
+          <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#2996F3] block mb-3">
+            FACT PRESERVATION FIRST
+          </span>
 
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-[#252525] leading-tight">
             Your Experience Should Stay Yours.

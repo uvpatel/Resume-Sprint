@@ -10,19 +10,6 @@ export function Hero() {
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl text-left">
-          {/* Announcement Badge / Text Link */}
-          <div className="mb-6 sm:mb-8 inline-block">
-            <a
-              href="#features"
-              className="group inline-flex items-center gap-2 rounded-full border border-[#E8E8E8] bg-[#F8FAFC] px-4 py-1.5 text-xs sm:text-sm font-medium text-[#626262] transition-all hover:border-[#2996F3]/40 hover:text-[#252525] hover:bg-[#EAF4FF]/50"
-            >
-              <span>Introducing smarter resume optimization</span>
-              <span className="text-[#2996F3] transition-transform duration-200 group-hover:translate-x-0.5">
-                →
-              </span>
-            </a>
-          </div>
-
           {/* Editorial Dark Charcoal Headline */}
           <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-[4.75rem] font-bold tracking-[-0.035em] text-[#252525] leading-[1.08] sm:leading-[1.05]">
             Make Your Resume Stand Out.

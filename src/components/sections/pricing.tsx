@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Check, ArrowRight, Sparkles } from "lucide-react";
+import { Check, ArrowRight } from "lucide-react";
 
 export function Pricing() {
   const tierFeatures = [
@@ -35,11 +35,10 @@ export function Pricing() {
           <div className="relative rounded-2xl border border-[#D6EBFF] bg-gradient-to-br from-white to-[#F8FAFC] p-8 sm:p-10 shadow-sm">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-8 border-b border-[#E8E8E8]">
               <div>
-                <div className="inline-flex items-center gap-1.5 rounded-full border border-[#D6EBFF] bg-[#EAF4FF] px-3 py-0.5 text-xs font-mono font-medium text-[#147DD8]">
-                  <Sparkles className="h-3 w-3 text-[#2996F3]" />
-                  <span>PUBLIC BETA TIER</span>
-                </div>
-                <h3 className="text-2xl font-bold text-[#252525] mt-3">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#2996F3] block">
+                  PUBLIC BETA TIER
+                </span>
+                <h3 className="text-2xl font-bold text-[#252525] mt-2">
                   Full Platform Access
                 </h3>
                 <p className="text-sm text-[#626262] mt-1">

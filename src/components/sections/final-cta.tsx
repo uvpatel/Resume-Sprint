@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export function FinalCTA() {
   return (
@@ -16,11 +16,9 @@ export function FinalCTA() {
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl mx-auto text-center">
-          {/* Subtle badge */}
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-[#D6EBFF] bg-[#EAF4FF] px-3.5 py-1 text-xs font-mono font-semibold text-[#147DD8] mb-6">
-            <Sparkles className="h-3.5 w-3.5 text-[#2996F3]" />
-            <span>START OPTIMIZING TODAY</span>
-          </div>
+          <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#2996F3] block mb-4">
+            START OPTIMIZING TODAY
+          </span>
 
           {/* Headline */}
           <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#252525] leading-tight">

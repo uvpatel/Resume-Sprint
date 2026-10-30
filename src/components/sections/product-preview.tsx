@@ -20,14 +20,6 @@ export function ProductPreview() {
   return (
     <section className="relative pt-4 pb-20 sm:pb-28 lg:pb-36 bg-white overflow-hidden">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Subtle Section Label */}
-        <div className="text-center mb-6">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E8E8E8] bg-[#F8FAFC] px-3.5 py-1 text-xs font-medium text-[#626262]">
-            <Sparkles className="h-3 w-3 text-[#2996F3]" />
-            <span>Interactive Platform Preview • Illustrative Interface</span>
-          </span>
-        </div>
-
         {/* Browser Mockup Window */}
         <div className="rounded-2xl border border-[#E8E8E8] bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.07)] overflow-hidden">
           {/* Browser Chrome Header */}
