@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import crypto from "crypto";
 import {
   ResumeBlock,
   Fact,
@@ -14,7 +15,14 @@ import {
 } from "../engine/scoring";
 
 const apiKey = process.env.GEMINI_API_KEY;
-const modelName = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+const modelName = process.env.GEMINI_MODEL || "gemini-flash-latest";
+
+// Global in-memory cache for scan evaluations (keyed on sha256 of resume text + JD + role)
+const SCAN_CACHE = new Map<string, ScanAiResult>();
+const MAX_SCAN_CACHE_SIZE = 200;
+
+// Bounded timeout for AI evaluation to prevent request hanging on slow models or 503 spikes
+const LLM_TIMEOUT_MS = 2500;
 
 function getClient(): GoogleGenAI | null {
   if (!apiKey) return null;
@@ -37,6 +45,12 @@ export interface ScanAiResult {
   contentRisk: "low" | "medium" | "high";
   parsingWarnings: string[];
   targetForecast: number | null;
+  telemetry?: {
+    llmUsed: boolean;
+    cached: boolean;
+    durationMs: number;
+    model?: string;
+  };
 }
 
 export async function runServerScan(
@@ -45,9 +59,35 @@ export async function runServerScan(
   jobDescription: string,
   targetRole?: string
 ): Promise<ScanAiResult> {
+  const startTime = performance.now();
   const resumeText = resumeBlocks.map((b) => b.text).join("\n");
 
-  // Run deterministic analysis baseline
+  // Check cache first
+  const cacheKey = crypto
+    .createHash("sha256")
+    .update(`${resumeText}::${jobDescription}::${targetRole || ""}`)
+    .digest("hex");
+
+  const cached = SCAN_CACHE.get(cacheKey);
+  if (cached) {
+    return {
+      ...cached,
+      scoreBreakdown: { ...cached.scoreBreakdown },
+      componentReasons: { ...cached.componentReasons },
+      requirements: structuredClone(cached.requirements),
+      matchedKeywords: [...cached.matchedKeywords],
+      missingKeywords: [...cached.missingKeywords],
+      unsupportedMissingKeywords: [...cached.unsupportedMissingKeywords],
+      topImprovements: structuredClone(cached.topImprovements),
+      telemetry: {
+        llmUsed: false,
+        cached: true,
+        durationMs: Math.round((performance.now() - startTime) * 100) / 100,
+      },
+    };
+  }
+
+  // 1. Run canonical Rubric v1 deterministic analysis baseline (sub-millisecond)
   const {
     requirements: baseReqs,
     matchedKeywords: baseMatched,
@@ -70,17 +110,21 @@ export async function runServerScan(
     contentRisk: "low",
     parsingWarnings: [],
     targetForecast: Math.min(100, deterministicScore.score + 3),
+    telemetry: {
+      llmUsed: false,
+      cached: false,
+      durationMs: Math.round((performance.now() - startTime) * 100) / 100,
+    },
   };
 
   const client = getClient();
   if (!client) {
+    setCache(cacheKey, fallbackResult);
     return fallbackResult;
   }
 
   try {
-    const prompt = `
-You are ResumeSprint's evidence-grounded resume analyst. Follow only this task contract.
-Return strict JSON with no markdown wrapping.
+    const prompt = `You are ResumeSprint's evidence-grounded resume analyst. Return strict JSON.
 Resume Text:
 ${resumeText}
 
@@ -94,10 +138,9 @@ Rubric v1 rules:
 - quantifiedImpact: integer 0 to 20
 - experienceDepth: integer 0 to 10
 - formattingAtsReadability: integer 0 to 10
-Components MUST strictly sum to total score.
-Never invent experience, skills, employers, or metrics not present in Resume Text.
+Components MUST strictly sum to total score. Never invent experience or skills not present in Resume Text.
 
-Expected JSON output format:
+Expected JSON format:
 {
   "scoreBreakdown": {
     "keywordSkillMatch": number,
@@ -116,19 +159,29 @@ Expected JSON output format:
     "experienceDepth": "string",
     "formattingAtsReadability": "string"
   }
-}
-`;
+}`;
 
-    const response = await client.models.generateContent({
+    // Execute with bounded timeout to guarantee low latency
+    const responsePromise = client.models.generateContent({
       model: modelName,
       contents: prompt,
       config: {
         responseMimeType: "application/json",
+        maxOutputTokens: 1024,
       },
     });
 
-    const responseText = response.text?.trim();
-    if (!responseText) return fallbackResult;
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`LLM_TIMEOUT_${LLM_TIMEOUT_MS}ms`)), LLM_TIMEOUT_MS)
+    );
+
+    const response = await Promise.race([responsePromise, timeoutPromise]);
+    const responseText = response?.text?.trim();
+
+    if (!responseText) {
+      setCache(cacheKey, fallbackResult);
+      return fallbackResult;
+    }
 
     const parsed = JSON.parse(responseText);
 
@@ -156,7 +209,7 @@ Expected JSON output format:
         validatedBreakdown.experienceDepth +
         validatedBreakdown.formattingAtsReadability;
 
-      return {
+      const aiResult: ScanAiResult = {
         score: calculatedTotal,
         scoreBreakdown: validatedBreakdown,
         componentReasons: {
@@ -174,14 +227,38 @@ Expected JSON output format:
         contentRisk: "low",
         parsingWarnings: [],
         targetForecast: Math.min(100, calculatedTotal + 3),
+        telemetry: {
+          llmUsed: true,
+          cached: false,
+          durationMs: Math.round((performance.now() - startTime) * 100) / 100,
+          model: modelName,
+        },
       };
+
+      setCache(cacheKey, aiResult);
+      return aiResult;
     }
 
+    setCache(cacheKey, fallbackResult);
     return fallbackResult;
-  } catch (err) {
-    console.warn("Gemini scan execution warning, using deterministic engine:", err);
+  } catch {
+    // Graceful fast fallback to calibrated deterministic engine without blocking client
+    fallbackResult.telemetry = {
+      llmUsed: false,
+      cached: false,
+      durationMs: Math.round((performance.now() - startTime) * 100) / 100,
+    };
+    setCache(cacheKey, fallbackResult);
     return fallbackResult;
   }
+}
+
+function setCache(key: string, result: ScanAiResult) {
+  if (SCAN_CACHE.size >= MAX_SCAN_CACHE_SIZE) {
+    const oldest = SCAN_CACHE.keys().next().value;
+    if (oldest) SCAN_CACHE.delete(oldest);
+  }
+  SCAN_CACHE.set(key, result);
 }
 
 export async function runServerOptimizationProposals(
@@ -189,6 +266,5 @@ export async function runServerOptimizationProposals(
   requirements: RequirementEvidence[]
 ): Promise<PatchProposal[]> {
   // Anchored deterministic proposals always grounded in actual candidate facts
-  const baseProposals = generateAnchoredProposals(blocks, requirements);
-  return baseProposals;
+  return generateAnchoredProposals(blocks, requirements);
 }

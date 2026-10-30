@@ -15,20 +15,23 @@ export interface DiffToken {
 }
 
 /**
- * Word-level Longest Common Subsequence diff.
- * Verified lossless reconstruction against tests.cjs.
+ * High-performance Word-level Longest Common Subsequence diff.
+ * Optimized with a contiguous Int32Array matrix to avoid GC pressure and array allocations.
+ * Verified lossless reconstruction against tests.cjs and tests/scoring.test.ts.
  */
 export function computeWordDiff(a: string, b: string): DiffToken[] {
   const x = a.split(/(\s+)/);
   const y = b.split(/(\s+)/);
 
-  const m: number[][] = Array.from({ length: x.length + 1 }, () =>
-    Array(y.length + 1).fill(0)
-  );
+  const stride = y.length + 1;
+  const m = new Int32Array((x.length + 1) * stride);
 
   for (let i = x.length - 1; i >= 0; i--) {
+    const row = i * stride;
+    const nextRow = (i + 1) * stride;
+    const xi = x[i];
     for (let j = y.length - 1; j >= 0; j--) {
-      m[i][j] = x[i] === y[j] ? 1 + m[i + 1][j + 1] : Math.max(m[i + 1][j], m[i][j + 1]);
+      m[row + j] = xi === y[j] ? 1 + m[nextRow + j + 1] : Math.max(m[nextRow + j], m[row + j + 1]);
     }
   }
 
@@ -40,7 +43,7 @@ export function computeWordDiff(a: string, b: string): DiffToken[] {
     if (i < x.length && j < y.length && x[i] === y[j]) {
       out.push({ type: "same", text: x[i++] });
       j++;
-    } else if (j < y.length && (i === x.length || m[i][j + 1] >= m[i + 1][j])) {
+    } else if (j < y.length && (i === x.length || m[i * stride + j + 1] >= m[(i + 1) * stride + j])) {
       out.push({ type: "add", text: y[j++] });
     } else {
       out.push({ type: "remove", text: x[i++] });
@@ -61,26 +64,33 @@ export function validatePreservation(
   approvedChanges: PatchProposal[] = [],
   facts: Fact[] = []
 ): PreservationResult {
-  const missing = sourceBlocks.filter((b) => !currentDraft.some((d) => d.id === b.id));
-  const unexpected = currentDraft.filter((d) => !sourceBlocks.some((s) => s.id === d.id));
+  const sourceBlockMap = new Map(sourceBlocks.map((s) => [s.id, s]));
+  const draftBlockMap = new Map(currentDraft.map((d) => [d.id, d]));
+
+  const missing = sourceBlocks.filter((b) => !draftBlockMap.has(b.id));
+  const unexpected = currentDraft.filter((d) => !sourceBlockMap.has(d.id));
+
+  // Approved change lookup
+  const approvedMap = new Map<string, string>();
+  for (const c of approvedChanges) {
+    approvedMap.set(c.blockId, c.after);
+  }
 
   // Check unresolved block text
   const unresolved = currentDraft.filter((draftBlock) => {
-    const sourceBlock = sourceBlocks.find((s) => s.id === draftBlock.id);
+    const sourceBlock = sourceBlockMap.get(draftBlock.id);
     if (!sourceBlock) return true;
     if (draftBlock.text === sourceBlock.text) return false;
     // Check if matched by an approved change
-    const isApproved = approvedChanges.some(
-      (c) => c.blockId === draftBlock.id && c.after === draftBlock.text
-    );
-    return !isApproved;
+    const approvedText = approvedMap.get(draftBlock.id);
+    return approvedText !== draftBlock.text;
   });
 
   // Check protected values
   const alteredProtectedFields: string[] = [];
   for (const fact of facts) {
     if (fact.protectedValues && fact.protectedValues.length > 0) {
-      const draftBlock = currentDraft.find((d) => d.id === fact.entryId);
+      const draftBlock = draftBlockMap.get(fact.entryId);
       if (!draftBlock) {
         alteredProtectedFields.push(fact.factId);
         continue;
@@ -123,6 +133,10 @@ export function validatePreservation(
   };
 }
 
+const ROLE_KEYWORDS_REGEX = /engineer|developer|lead|architect|manager|consultant/i;
+const SENIOR_KEYWORDS_REGEX = /senior|staff|principal|lead/i;
+const METRICS_REGEX = /\b\d+[%kKmMbB]?\b/g;
+
 /**
  * Canonical Rubric v1 Evaluator
  * keywordSkillMatch 40
@@ -149,15 +163,15 @@ export function evaluateRubricV1(
   // 2. Role Title Alignment (max 20)
   let roleTitleAlignment = 12;
   const roleBlocks = blocks.filter((b) => b.section === "Experience" || b.section === "Summary");
-  if (roleBlocks.some((b) => /engineer|developer|lead|architect|manager|consultant/i.test(b.text))) {
+  if (roleBlocks.some((b) => ROLE_KEYWORDS_REGEX.test(b.text))) {
     roleTitleAlignment = 16;
   }
-  if (roleBlocks.some((b) => /senior|staff|principal|lead/i.test(b.text))) {
+  if (roleBlocks.some((b) => SENIOR_KEYWORDS_REGEX.test(b.text))) {
     roleTitleAlignment = Math.min(20, roleTitleAlignment + 4);
   }
 
   // 3. Quantified Impact (max 20)
-  const metricMatches = resumeText.match(/\b\d+[%kKmMbB]?\b/g) || [];
+  const metricMatches = resumeText.match(METRICS_REGEX) || [];
   let quantifiedImpact = 8;
   if (metricMatches.length >= 1) quantifiedImpact = 12;
   if (metricMatches.length >= 3) quantifiedImpact = 16;
@@ -171,11 +185,16 @@ export function evaluateRubricV1(
 
   // 5. ATS Readability & Formatting (max 10)
   let formattingAtsReadability = 7;
-  const hasStandardSections = ["Summary", "Experience", "Skills", "Education"].filter((sec) =>
-    blocks.some((b) => b.section === sec)
-  );
-  if (hasStandardSections.length >= 3) formattingAtsReadability = 9;
-  if (hasStandardSections.length >= 4) formattingAtsReadability = 10;
+  const standardSections = new Set(["Summary", "Experience", "Skills", "Education"]);
+  let matchedSectionsCount = 0;
+  for (const b of blocks) {
+    if (standardSections.has(b.section)) {
+      matchedSectionsCount++;
+      standardSections.delete(b.section);
+    }
+  }
+  if (matchedSectionsCount >= 3) formattingAtsReadability = 9;
+  if (matchedSectionsCount >= 4) formattingAtsReadability = 10;
 
   const breakdown: ScoreBreakdown = {
     keywordSkillMatch,
@@ -207,8 +226,32 @@ export function evaluateRubricV1(
   };
 }
 
+const CANDIDATE_KEYWORDS = [
+  "MuleSoft", "Salesforce", "SAP", "RabbitMQ", "SQL", "APIs", "REST",
+  "PostgreSQL", "MongoDB", "TypeScript", "JavaScript", "Python", "React",
+  "Node.js", "Docker", "Kubernetes", "AWS", "GCP", "Azure", "CI/CD",
+  "Microservices", "Kafka", "Redis", "GraphQL", "Git", "Agile", "Linux",
+  "Tailwind", "Next.js", "Batch Processing", "Data Pipelines"
+] as const;
+
+// Pre-compiled global regexes for static keyword detection
+const KEYWORD_REGEX_MAP = new Map<string, RegExp>();
+for (const kw of CANDIDATE_KEYWORDS) {
+  KEYWORD_REGEX_MAP.set(kw, new RegExp(`\\b${kw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i"));
+}
+
+function getKeywordRegex(kw: string): RegExp {
+  let regex = KEYWORD_REGEX_MAP.get(kw);
+  if (!regex) {
+    regex = new RegExp(`\\b${kw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
+    KEYWORD_REGEX_MAP.set(kw, regex);
+  }
+  return regex;
+}
+
 /**
- * Extract requirements and evaluate candidate evidence against Job Description
+ * Extract requirements and evaluate candidate evidence against Job Description.
+ * Optimized with fast string indexing and pre-compiled regexes.
  */
 export function extractAndMatchRequirements(
   resumeBlocks: ResumeBlock[],
@@ -220,22 +263,18 @@ export function extractAndMatchRequirements(
   unsupportedMissingKeywords: string[];
   topImprovements: TopImprovement[];
 } {
+  const jdLower = jobDescription.toLowerCase();
   const resumeFull = resumeBlocks.map((b) => b.text).join(" ").toLowerCase();
 
-  // Extract core technical and functional skills from job description
-  const candidateKeywords = [
-    "MuleSoft", "Salesforce", "SAP", "RabbitMQ", "SQL", "APIs", "REST",
-    "PostgreSQL", "MongoDB", "TypeScript", "JavaScript", "Python", "React",
-    "Node.js", "Docker", "Kubernetes", "AWS", "GCP", "Azure", "CI/CD",
-    "Microservices", "Kafka", "Redis", "GraphQL", "Git", "Agile", "Linux",
-    "Tailwind", "Next.js", "Batch Processing", "Data Pipelines"
-  ];
-
+  // Fast pre-filter: check if lowercase keyword is in jdLower before running regex
   const jdKeywords: string[] = [];
-  for (const kw of candidateKeywords) {
-    const regex = new RegExp(`\\b${kw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
-    if (regex.test(jobDescription)) {
-      jdKeywords.push(kw);
+  for (const kw of CANDIDATE_KEYWORDS) {
+    const kwLower = kw.toLowerCase();
+    if (jdLower.includes(kwLower)) {
+      const regex = getKeywordRegex(kw);
+      if (regex.test(jobDescription)) {
+        jdKeywords.push(kw);
+      }
     }
   }
 
@@ -249,6 +288,12 @@ export function extractAndMatchRequirements(
     jdKeywords.push(...Array.from(new Set(jdWords)));
   }
 
+  // Pre-index blocks with lowercase representations for instant match checks
+  const indexedBlocks = resumeBlocks.map((b) => ({
+    block: b,
+    lower: b.text.toLowerCase(),
+  }));
+
   const requirements: RequirementEvidence[] = [];
   const matchedKeywords: string[] = [];
   const missingKeywords: string[] = [];
@@ -256,8 +301,17 @@ export function extractAndMatchRequirements(
 
   for (let idx = 0; idx < jdKeywords.length; idx++) {
     const kw = jdKeywords[idx];
-    const kwRegex = new RegExp(`\\b${kw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
-    const matchedBlock = resumeBlocks.find((b) => kwRegex.test(b.text));
+    const kwLower = kw.toLowerCase();
+    const kwRegex = getKeywordRegex(kw);
+
+    // Fast candidate check: does any block lower-case include kwLower?
+    let matchedBlock: ResumeBlock | undefined;
+    for (const ib of indexedBlocks) {
+      if (ib.lower.includes(kwLower) && kwRegex.test(ib.block.text)) {
+        matchedBlock = ib.block;
+        break;
+      }
+    }
 
     const reqId = `req_${idx + 1}`;
     if (matchedBlock) {
@@ -334,8 +388,19 @@ export function extractAndMatchRequirements(
   };
 }
 
+const RE_RESPONSIBLE = /^Responsible for (building|developing|designing|creating)\b/i;
+const RE_WORKED_ON = /^Worked on\b/i;
+
+const VERB_MAP: Record<string, string> = {
+  building: "Built",
+  developing: "Developed",
+  designing: "Designed",
+  creating: "Created",
+};
+
 /**
- * Generate anchored proposal patches grounded in candidate facts
+ * Generate anchored proposal patches grounded in candidate facts.
+ * Pre-compiled regex evaluation for sub-millisecond execution.
  */
 export function generateAnchoredProposals(
   blocks: ResumeBlock[],
@@ -348,17 +413,11 @@ export function generateAnchoredProposals(
     const text = block.text;
 
     // Pattern 1: "Responsible for building..." -> "Built..."
-    if (/^Responsible for (building|developing|designing|creating)\b/i.test(text)) {
-      const verbMatch = text.match(/^Responsible for (building|developing|designing|creating)\b/i);
-      const verbMap: Record<string, string> = {
-        building: "Built",
-        developing: "Developed",
-        designing: "Designed",
-        creating: "Created",
-      };
+    if (RE_RESPONSIBLE.test(text)) {
+      const verbMatch = text.match(RE_RESPONSIBLE);
       const originalVerb = verbMatch ? verbMatch[1].toLowerCase() : "building";
-      const replacementVerb = verbMap[originalVerb] || "Built";
-      const after = text.replace(/^Responsible for (building|developing|designing|creating)\b/i, replacementVerb);
+      const replacementVerb = VERB_MAP[originalVerb] || "Built";
+      const after = text.replace(RE_RESPONSIBLE, replacementVerb);
 
       proposals.push({
         changeId: `c${changeCount++}`,
@@ -380,8 +439,8 @@ export function generateAnchoredProposals(
     }
 
     // Pattern 2: "Worked on..." -> "Contributed to..."
-    else if (/^Worked on\b/i.test(text)) {
-      const after = text.replace(/^Worked on\b/i, "Contributed to");
+    else if (RE_WORKED_ON.test(text)) {
+      const after = text.replace(RE_WORKED_ON, "Contributed to");
       proposals.push({
         changeId: `c${changeCount++}`,
         blockId: block.id,

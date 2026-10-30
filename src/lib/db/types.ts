@@ -52,7 +52,7 @@ export interface ResumeRecord {
   id: string;
   userId: string;
   originalFileName: string;
-  fileType: 'pdf' | 'docx' | 'txt';
+  fileType: 'pdf' | 'docx' | 'txt' | 'doc';
   fileSize: number;
   rawText: string;
   blocks: ResumeBlock[];
