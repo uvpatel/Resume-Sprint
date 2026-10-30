@@ -16,9 +16,9 @@ export function ScoreRing({
   const progress = Math.min(100, Math.max(0, score));
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
-  // Color scheme aligned with ResumeSprint landing page branding
+  // Modern vibrant colors on dark surface
   const strokeColor =
-    progress >= 80 ? "#10B981" : progress >= 60 ? "#2996F3" : progress >= 40 ? "#F59E0B" : "#EF4444";
+    progress >= 80 ? "#34D399" : progress >= 60 ? "#38BDF8" : progress >= 40 ? "#FBBF24" : "#F43F5E";
 
   return (
     <div className="relative inline-flex flex-col items-center justify-center">
@@ -27,7 +27,7 @@ export function ScoreRing({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="#E8E8E8"
+          stroke="#27272A"
           strokeWidth={strokeWidth}
           fill="transparent"
         />
@@ -45,10 +45,10 @@ export function ScoreRing({
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-        <span className="text-3xl font-bold tracking-tight text-[#252525] leading-none">
+        <span className="text-3xl font-bold tracking-tight text-white leading-none font-mono">
           {score}
         </span>
-        <span className="text-[10px] font-mono tracking-wider text-[#9CA3AF] uppercase mt-1 font-semibold">
+        <span className="text-[10px] font-mono tracking-wider text-zinc-400 uppercase mt-1 font-semibold">
           {label}
         </span>
       </div>

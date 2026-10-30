@@ -12,19 +12,19 @@ export function KeywordChips({
   unsupportedKeywords,
 }: KeywordChipsProps) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* Matched Keywords */}
       <div>
-        <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 mb-2">
-          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 mb-2.5">
+          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
           <span>Supported by Resume Evidence ({matchedKeywords.length})</span>
         </div>
         {matchedKeywords.length > 0 ? (
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {matchedKeywords.map((kw) => (
               <span
                 key={kw}
-                className="inline-flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-xs font-semibold text-emerald-700"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-xs font-semibold text-emerald-400 font-mono"
               >
                 <span>✓</span>
                 <span>{kw}</span>
@@ -32,22 +32,22 @@ export function KeywordChips({
             ))}
           </div>
         ) : (
-          <p className="text-xs text-[#9CA3AF] italic">No direct keyword matches found.</p>
+          <p className="text-xs text-zinc-500 italic">No direct keyword matches found.</p>
         )}
       </div>
 
       {/* Missing / Needs Confirmation */}
       <div>
-        <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-700 mb-2">
-          <AlertTriangle className="h-3.5 w-3.5 text-amber-600" />
-          <span>Needs Clarification ({missingKeywords.length})</span>
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-400 mb-2.5">
+          <AlertTriangle className="h-3.5 w-3.5 text-amber-400" />
+          <span>Needs Clarification / Evidence ({missingKeywords.length})</span>
         </div>
         {missingKeywords.length > 0 ? (
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {missingKeywords.map((kw) => (
               <span
                 key={kw}
-                className="inline-flex items-center gap-1 rounded-md bg-amber-50 border border-amber-200 px-2 py-0.5 text-xs font-semibold text-amber-700"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 text-xs font-semibold text-amber-400 font-mono"
               >
                 <span>?</span>
                 <span>{kw}</span>
@@ -55,22 +55,22 @@ export function KeywordChips({
             ))}
           </div>
         ) : (
-          <p className="text-xs text-[#9CA3AF] italic">No unconfirmed skills identified.</p>
+          <p className="text-xs text-zinc-500 italic">No unconfirmed skills identified.</p>
         )}
       </div>
 
       {/* Unsupported Gaps */}
       <div>
-        <div className="flex items-center gap-1.5 text-xs font-semibold text-[#626262] mb-2">
-          <MinusCircle className="h-3.5 w-3.5 text-[#9CA3AF]" />
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-400 mb-2.5">
+          <MinusCircle className="h-3.5 w-3.5 text-zinc-500" />
           <span>Unsupported Gaps — Excluded from Rewrites ({unsupportedKeywords.length})</span>
         </div>
         {unsupportedKeywords.length > 0 ? (
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {unsupportedKeywords.map((kw) => (
               <span
                 key={kw}
-                className="inline-flex items-center gap-1 rounded-md bg-[#F8FAFC] border border-[#E8E8E8] px-2 py-0.5 text-xs font-medium text-[#626262]"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-zinc-800/80 border border-zinc-700/60 px-2.5 py-1 text-xs font-medium text-zinc-400 font-mono"
               >
                 <span>✕</span>
                 <span>{kw}</span>
@@ -78,7 +78,7 @@ export function KeywordChips({
             ))}
           </div>
         ) : (
-          <p className="text-xs text-[#9CA3AF] italic">No unsupported gaps found.</p>
+          <p className="text-xs text-zinc-500 italic">No unsupported gaps recorded.</p>
         )}
       </div>
     </div>

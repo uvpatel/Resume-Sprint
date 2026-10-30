@@ -51,23 +51,23 @@ export function DashboardHeader({ userEmail, userName }: DashboardHeaderProps) {
 
   return (
     <>
-      <header className="h-15 border-b border-[#E8E8E8] bg-white/95 backdrop-blur-md px-4 sm:px-6 lg:px-8 xl:px-10 flex items-center justify-between sticky top-0 z-20 shadow-xs">
+      <header className="h-16 border-b border-zinc-800/80 bg-[#09090B]/90 backdrop-blur-md px-4 sm:px-6 lg:px-8 xl:px-10 flex items-center justify-between sticky top-0 z-20 shadow-xs">
         <div className="flex items-center gap-3">
           {/* Mobile hamburger button */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-1.5 rounded-lg text-[#626262] hover:text-[#252525] hover:bg-[#F8FAFC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2996F3]"
+            className="md:hidden p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
             aria-label="Toggle navigation drawer"
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
 
           {/* Breadcrumbs */}
-          <nav aria-label="Breadcrumbs" className="flex items-center gap-1.5 text-xs text-[#626262]">
+          <nav aria-label="Breadcrumbs" className="flex items-center gap-1.5 text-xs text-zinc-400">
             <Link
               href="/dashboard"
-              className="hover:text-[#252525] transition-colors font-medium focus-visible:underline"
+              className="hover:text-zinc-200 transition-colors font-medium focus-visible:underline"
             >
               ResumeSprint
             </Link>
@@ -80,13 +80,13 @@ export function DashboardHeader({ userEmail, userName }: DashboardHeaderProps) {
 
               return (
                 <div key={href} className="flex items-center gap-1.5">
-                  <ChevronRight className="h-3.5 w-3.5 text-[#9CA3AF]" />
+                  <ChevronRight className="h-3.5 w-3.5 text-zinc-600" />
                   {isLast ? (
-                    <span className="text-[#252525] font-semibold">{label}</span>
+                    <span className="text-zinc-200 font-semibold">{label}</span>
                   ) : (
                     <Link
                       href={href}
-                      className="hover:text-[#252525] transition-colors font-medium focus-visible:underline"
+                      className="hover:text-zinc-200 transition-colors font-medium focus-visible:underline"
                     >
                       {label}
                     </Link>
@@ -102,15 +102,15 @@ export function DashboardHeader({ userEmail, userName }: DashboardHeaderProps) {
           {pathname !== "/dashboard/new" && (
             <Link
               href="/dashboard/new"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#2996F3] hover:bg-[#147DD8] text-white text-xs font-semibold shadow-xs transition-all active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2996F3]"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-zinc-950 text-xs font-semibold shadow-xs transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
             >
-              <Plus className="h-3.5 w-3.5" />
+              <Plus className="h-3.5 w-3.5 stroke-[2.5]" />
               <span className="hidden sm:inline">Analyze Resume</span>
               <span className="sm:hidden">Analyze</span>
             </Link>
           )}
 
-          <div className="pl-1 border-l border-[#E8E8E8]">
+          <div className="pl-2 border-l border-zinc-800">
             <UserMenu user={{ name: userName, email: userEmail }} />
           </div>
         </div>
@@ -120,11 +120,11 @@ export function DashboardHeader({ userEmail, userName }: DashboardHeaderProps) {
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-50 md:hidden flex">
           <div
-            className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
             onClick={() => setMobileMenuOpen(false)}
             aria-hidden="true"
           />
-          <div className="relative flex flex-col w-[260px] max-w-xs bg-white border-r border-[#E8E8E8] shadow-2xl z-50 animate-in slide-in-from-left duration-200">
+          <div className="relative flex flex-col w-[270px] max-w-xs bg-[#0C0D10] border-r border-zinc-800/80 shadow-2xl z-50 animate-in slide-in-from-left duration-200">
             <DashboardSidebar
               userEmail={userEmail}
               userName={userName}

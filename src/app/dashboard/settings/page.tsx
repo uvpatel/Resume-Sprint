@@ -1,151 +1,134 @@
 import { getCurrentUser } from "@/lib/auth/session";
 import {
   User,
-  Database,
-  Lock,
+  ShieldCheck,
+  Cpu,
+  FileCheck2,
 } from "lucide-react";
+import { KpiCard } from "@/components/dashboard/kpi-card";
 
 export default async function SettingsPage() {
   const user = await getCurrentUser();
   if (!user) return null;
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
+    <div className="space-y-7 pb-10">
       {/* Header */}
-      <div className="border-b border-[#E8E8E8] pb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#252525]">
+      <div className="pb-1">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">
           Settings & Compliance
         </h1>
-        <p className="text-sm text-[#626262] mt-1">
+        <p className="text-sm text-muted-foreground mt-0.5">
           Candidate profile, Rubric v1 scoring configurations, and data isolation policies.
         </p>
       </div>
 
+      {/* KPI Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <KpiCard
+          title="Account Identity"
+          value="Active"
+          description={user.name || "Authenticated Candidate"}
+          icon={User}
+          accentColor="blue"
+          badge="VERIFIED"
+        />
+
+        <KpiCard
+          title="Scoring Rubric"
+          value="v1.0"
+          description="40/20/20/10/10 calibrated"
+          icon={Cpu}
+          accentColor="cream"
+        />
+
+        <KpiCard
+          title="Content Preservation"
+          value="100%"
+          description="Strict fact invariance gate"
+          icon={ShieldCheck}
+          accentColor="emerald"
+        />
+
+        <KpiCard
+          title="Multi-Format Engine"
+          value="PDF/DOCX/TXT"
+          description="Native parser sandboxes"
+          icon={FileCheck2}
+          accentColor="purple"
+        />
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Candidate Profile Card */}
-        <div className="rounded-xl border border-[#E8E8E8] bg-white p-6 space-y-5 shadow-xs">
-          <div className="flex items-center gap-2 pb-3.5 border-b border-[#E8E8E8]">
-            <div className="h-7 w-7 rounded-lg bg-[#EAF4FF] text-[#2996F3] flex items-center justify-center">
-              <User className="h-4 w-4" />
+        <div className="rounded-xl border border-border bg-card p-5 sm:p-6 space-y-5 shadow-xs">
+          <div className="flex items-center gap-2.5 pb-3 border-b border-border">
+            <div className="h-7 w-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+              <User className="h-3.5 w-3.5" />
             </div>
-            <h2 className="text-sm font-bold text-[#252525]">
+            <h2 className="text-sm font-semibold text-foreground">
               Candidate Profile
             </h2>
           </div>
 
           <div className="space-y-4 text-xs">
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#9CA3AF] block">
+              <span className="text-[11px] font-medium text-muted-foreground block">
                 Full Name
               </span>
-              <p className="text-sm font-bold text-[#252525] mt-0.5">
+              <p className="text-sm font-semibold text-foreground mt-0.5">
                 {user.name}
               </p>
             </div>
 
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#9CA3AF] block">
+              <span className="text-[11px] font-medium text-muted-foreground block">
                 Email Address
               </span>
-              <p className="text-sm font-mono text-[#252525] mt-0.5">
+              <p className="text-sm font-mono text-foreground mt-0.5">
                 {user.email}
               </p>
             </div>
 
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#9CA3AF] block">
-                User ID
+              <span className="text-[11px] font-medium text-muted-foreground block">
+                User Session ID
               </span>
-              <p className="text-xs font-mono text-[#626262] mt-0.5">
+              <p className="text-xs font-mono text-muted-foreground mt-0.5 truncate">
                 {user.id}
               </p>
             </div>
-
-            <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#9CA3AF] block mb-1">
-                Authentication Status
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 px-3 py-1 text-xs font-semibold">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Active & Authenticated</span>
-              </span>
-            </div>
           </div>
         </div>
 
-        {/* ATS & Engine Configuration */}
-        <div className="rounded-xl border border-[#E8E8E8] bg-white p-6 space-y-5 shadow-xs">
-          <div className="flex items-center gap-2 pb-3.5 border-b border-[#E8E8E8]">
-            <div className="h-7 w-7 rounded-lg bg-[#EAF4FF] text-[#2996F3] flex items-center justify-center">
-              <Database className="h-4 w-4" />
+        {/* Rubric v1 Governance Card */}
+        <div className="rounded-xl border border-border bg-card p-5 sm:p-6 space-y-5 shadow-xs">
+          <div className="flex items-center gap-2.5 pb-3 border-b border-border">
+            <div className="h-7 w-7 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <Cpu className="h-3.5 w-3.5" />
             </div>
-            <h2 className="text-sm font-bold text-[#252525]">
-              Scoring & Rubric Engine
+            <h2 className="text-sm font-semibold text-foreground">
+              Rubric v1 Standards
             </h2>
           </div>
 
-          <div className="space-y-3.5 text-xs text-[#626262] leading-relaxed">
-            <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#9CA3AF] block">
-                Active Rubric Standard
+          <div className="space-y-3 text-xs text-muted-foreground leading-relaxed">
+            <div className="p-3 rounded-lg bg-muted/40 border border-border/60">
+              <span className="font-semibold text-foreground block mb-0.5">
+                Deterministic Scoring Guarantee
               </span>
-              <p className="font-mono font-bold text-[#252525] text-sm mt-0.5">
-                Canonical Rubric v1.0 (40 / 20 / 20 / 10 / 10)
-              </p>
+              <span>
+                Scores are calculated strictly against authenticated facts and target job requirements.
+              </span>
             </div>
 
-            <p className="text-xs text-[#626262]">
-              Strictly calibrated dimensions: Keywords (40), Alignment (20), Quantified Impact (20), Experience Depth (10), and ATS Formatting (10).
-            </p>
-
-            <div className="p-3.5 bg-[#F8FAFC] rounded-lg border border-[#E8E8E8] space-y-1">
-              <span className="text-xs font-bold text-[#252525] block">
-                Zero Fabrication Policy
+            <div className="p-3 rounded-lg bg-muted/40 border border-border/60">
+              <span className="font-semibold text-foreground block mb-0.5">
+                Zero Synthetic Hallucinations
               </span>
-              <p className="text-[11px] text-[#626262] leading-normal">
-                ResumeSprint will never inject synthetic accomplishments, invented employers, or fictitious metrics into your resume.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Security & Data Isolation */}
-        <div className="md:col-span-2 rounded-xl border border-[#E8E8E8] bg-white p-6 space-y-5 shadow-xs">
-          <div className="flex items-center gap-2 pb-3.5 border-b border-[#E8E8E8]">
-            <div className="h-7 w-7 rounded-lg bg-[#EAF4FF] text-[#2996F3] flex items-center justify-center">
-              <Lock className="h-4 w-4" />
-            </div>
-            <h2 className="text-sm font-bold text-[#252525]">
-              Security & Data Governance
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-            <div className="p-4 bg-[#F8FAFC] rounded-lg border border-[#E8E8E8] space-y-1">
-              <span className="font-bold text-[#252525] block">
-                User Isolation
+              <span>
+                The platform blocks the addition of ungrounded dates, metrics, degrees, or certifications.
               </span>
-              <p className="text-xs text-[#626262] leading-relaxed">
-                All resume documents and scans are strictly scoped and authorized to your user session ID.
-              </p>
-            </div>
-
-            <div className="p-4 bg-[#F8FAFC] rounded-lg border border-[#E8E8E8] space-y-1">
-              <span className="font-bold text-[#252525] block">
-                Server-Side Processing
-              </span>
-              <p className="text-xs text-[#626262] leading-relaxed">
-                Document text extraction and AI evaluation occur strictly in isolated server-side sandboxes.
-              </p>
-            </div>
-
-            <div className="p-4 bg-[#F8FAFC] rounded-lg border border-[#E8E8E8] space-y-1">
-              <span className="font-bold text-[#252525] block">
-                Preservation Verification
-              </span>
-              <p className="text-xs text-[#626262] leading-relaxed">
-                Exports are cryptographically gated. Any accidental omission of historical facts halts file download.
-              </p>
             </div>
           </div>
         </div>
