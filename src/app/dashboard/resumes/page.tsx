@@ -12,29 +12,6 @@ import { EmptyState } from "@/components/dashboard/empty-state";
 import { KpiCard } from "@/components/dashboard/kpi-card";
 import { ResumesTable } from "@/components/dashboard/resumes-table";
 
-function FormatBadge({ format }: { format: string }) {
-  const f = format.toUpperCase();
-  if (f === "PDF") {
-    return (
-      <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-mono font-semibold bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20">
-        PDF
-      </span>
-    );
-  }
-  if (f === "DOCX") {
-    return (
-      <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-mono font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
-        DOCX
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-mono font-semibold bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20">
-      {f}
-    </span>
-  );
-}
-
 export default async function ResumesListPage() {
   const user = await getCurrentUser();
   if (!user) return null;

@@ -22,12 +22,13 @@ export default async function DashboardLayout({
   const resumes = await getResumesByUserId(user.id);
 
   return (
-    <div className="min-h-screen bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 antialiased selection:bg-indigo-500/20 selection:text-indigo-600">
       <SidebarProvider defaultOpen={true}>
         <AppSidebar
           user={{
             name: user.name,
             email: user.email,
+            image: user.image || "https://github.com/uvpatel.png",
           }}
           resumes={resumes.map((r) => ({
             id: r.id,
@@ -35,8 +36,14 @@ export default async function DashboardLayout({
             fileType: r.fileType,
           }))}
         />
-        <SidebarInset className="bg-background flex flex-col min-w-0">
-          <SiteHeader user={{ name: user.name, email: user.email }} />
+        <SidebarInset className="bg-[#F8FAFC] dark:bg-zinc-950 flex flex-col min-w-0">
+          <SiteHeader
+            user={{
+              name: user.name,
+              email: user.email,
+              image: user.image || "https://github.com/uvpatel.png",
+            }}
+          />
           <main className="flex-1 px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full max-w-[1440px] mx-auto">
             {children}
           </main>

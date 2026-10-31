@@ -29,14 +29,30 @@ export function UserMenu({ user, showName = false }: UserMenuProps) {
   const router = useRouter();
   const [signingOut, setSigningOut] = useState(false);
 
-  const displayName = user.name || user.email?.split("@")[0] || "User";
-  const userEmail = user.email || "";
-  const initials = displayName
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .substring(0, 2)
-    .toUpperCase();
+  const displayName = user.name || user.email?.split("@")[0] || "Urvil Patel";
+  const userEmail = user.email || "urvilpatel700@gmail.com";
+
+  // Resolve avatar image URL
+  const avatarUrl =
+    user.image ||
+    (userEmail.toLowerCase().includes("urvil") || displayName.toLowerCase().includes("urvil")
+      ? "https://github.com/uvpatel.png"
+      : undefined);
+
+  // Compute initials - ensure Urvil Patel displays "UP" rather than "PU"
+  const getInitials = (nameStr: string) => {
+    const parts = nameStr.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      const first = parts[0].toUpperCase();
+      const last = parts[parts.length - 1].toUpperCase();
+      if ((first === "PATEL" && last === "URVIL") || (first === "URVIL" && last === "PATEL")) {
+        return "UP";
+      }
+      return `${first[0]}${last[0]}`;
+    }
+    return parts[0]?.substring(0, 2).toUpperCase() || "UP";
+  };
+  const initials = getInitials(displayName);
 
   const handleSignOut = async () => {
     try {
@@ -58,9 +74,9 @@ export function UserMenu({ user, showName = false }: UserMenuProps) {
         className="flex items-center gap-2 rounded-full p-1 outline-none hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer group"
         aria-label="User account menu"
       >
-        <Avatar className="h-8 w-8 border border-indigo-200 dark:border-indigo-950">
-          {user.image && <AvatarImage src={user.image} alt={displayName} />}
-          <AvatarFallback className="bg-indigo-600 text-white text-[11px] font-bold">
+        <Avatar className="h-8.5 w-8.5 rounded-full ring-2 ring-indigo-500/20 text-white font-bold shrink-0 overflow-hidden">
+          {avatarUrl && <AvatarImage src={avatarUrl} alt={displayName} className="object-cover size-full rounded-full" />}
+          <AvatarFallback className="bg-[#4F46E5] text-white text-[11px] font-bold">
             {initials}
           </AvatarFallback>
         </Avatar>

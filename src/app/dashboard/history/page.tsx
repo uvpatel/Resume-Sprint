@@ -3,7 +3,6 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { getScansByUserId, getResumeById } from "@/lib/db/repository";
 import {
   History,
-  Clock,
   Plus,
   Award,
   BarChart3,

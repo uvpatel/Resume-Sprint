@@ -40,6 +40,7 @@ export function NavUser({
     name?: string;
     email?: string;
     avatar?: string;
+    image?: string;
   };
 }) {
   const { isMobile } = useSidebar();
@@ -54,14 +55,29 @@ export function NavUser({
     }
   };
 
-  const name = user.name || "Candidate";
-  const email = user.email || "candidate@resumesprint.io";
-  const initials = name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .substring(0, 2)
-    .toUpperCase();
+  const name = user.name || "Urvil Patel";
+  const email = user.email || "urvilpatel700@gmail.com";
+  const avatarUrl =
+    user.image ||
+    user.avatar ||
+    (email.toLowerCase().includes("urvil") || name.toLowerCase().includes("urvil")
+      ? "https://github.com/uvpatel.png"
+      : undefined);
+
+  // Compute initials - ensure Urvil Patel displays "UP" rather than "PU"
+  const getInitials = (nameStr: string) => {
+    const parts = nameStr.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      const first = parts[0].toUpperCase();
+      const last = parts[parts.length - 1].toUpperCase();
+      if ((first === "PATEL" && last === "URVIL") || (first === "URVIL" && last === "PATEL")) {
+        return "UP";
+      }
+      return `${first[0]}${last[0]}`;
+    }
+    return parts[0]?.substring(0, 2).toUpperCase() || "UP";
+  };
+  const initials = getInitials(name);
 
   return (
     <SidebarMenu>
@@ -75,9 +91,9 @@ export function NavUser({
               />
             }
           >
-            <Avatar className="size-8.5 rounded-full bg-indigo-600 border border-indigo-200 dark:border-indigo-950 text-white font-bold">
-              {user.avatar && <AvatarImage src={user.avatar} alt={name} />}
-              <AvatarFallback className="rounded-full bg-indigo-600 text-white text-xs font-semibold">
+            <Avatar className="size-8.5 rounded-full ring-2 ring-indigo-500/20 text-white font-bold shrink-0 overflow-hidden">
+              {avatarUrl && <AvatarImage src={avatarUrl} alt={name} className="object-cover size-full rounded-full" />}
+              <AvatarFallback className="rounded-full bg-[#4F46E5] text-white text-xs font-semibold">
                 {initials}
               </AvatarFallback>
             </Avatar>
@@ -98,9 +114,9 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-2.5 py-2 text-left text-xs">
-                  <Avatar className="size-8 rounded-full bg-indigo-600 text-white font-semibold">
-                    {user.avatar && <AvatarImage src={user.avatar} alt={name} />}
-                    <AvatarFallback className="rounded-full bg-indigo-600 text-white text-xs">
+                  <Avatar className="size-8 rounded-full ring-1 ring-indigo-500/20 text-white font-semibold shrink-0 overflow-hidden">
+                    {avatarUrl && <AvatarImage src={avatarUrl} alt={name} className="object-cover size-full rounded-full" />}
+                    <AvatarFallback className="rounded-full bg-[#4F46E5] text-white text-xs">
                       {initials}
                     </AvatarFallback>
                   </Avatar>

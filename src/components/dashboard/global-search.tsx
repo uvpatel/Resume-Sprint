@@ -11,15 +11,8 @@ import {
   CornerDownLeft,
   Loader2,
   X,
-  Clock,
-  Sparkles,
 } from "lucide-react";
-import type {
-  SearchResponse,
-  SearchResultResume,
-  SearchResultScan,
-  SearchResultPage,
-} from "@/app/api/search/route";
+import type { SearchResponse } from "@/app/api/search/route";
 
 function FormatBadge({ format }: { format: string }) {
   const f = format.toUpperCase();
@@ -235,10 +228,11 @@ export function GlobalSearch() {
               }
             }}
             onKeyDown={handleKeyDown}
-            placeholder="Search resumes, analyses..."
-            className="w-full bg-muted/40 hover:bg-muted/60 focus:bg-background border border-border/80 rounded-lg pl-8 pr-16 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs transition-all"
+            placeholder="Search resumes, analyses, or candidates..."
+            className="w-full bg-[#F0F2FA] dark:bg-zinc-800/80 hover:bg-[#EBEEF8] focus:bg-white dark:focus:bg-zinc-900 border border-slate-200/60 dark:border-zinc-700/60 rounded-2xl pl-8.5 pr-16 py-2 text-xs text-slate-800 dark:text-zinc-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 shadow-xs transition-all"
             role="combobox"
             aria-expanded={isOpen}
+            aria-controls="global-search-results"
             aria-haspopup="listbox"
           />
 
@@ -268,7 +262,11 @@ export function GlobalSearch() {
 
         {/* Dropdown Results Box */}
         {isOpen && (
-          <div className="absolute left-0 right-0 top-full mt-1.5 bg-card/95 backdrop-blur-md border border-border rounded-xl shadow-xl z-50 overflow-hidden divide-y divide-border/60 max-h-[460px] flex flex-col animate-in fade-in zoom-in-95 duration-100">
+          <div
+            id="global-search-results"
+            role="listbox"
+            className="absolute left-0 right-0 top-full mt-1.5 bg-card/95 backdrop-blur-md border border-border rounded-xl shadow-xl z-50 overflow-hidden divide-y divide-border/60 max-h-[460px] flex flex-col animate-in fade-in zoom-in-95 duration-100"
+          >
             {/* Scrollable list */}
             <div className="overflow-y-auto p-1.5 space-y-3">
               {/* Resumes Section */}
@@ -452,7 +450,7 @@ export function GlobalSearch() {
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search resumes, analyses..."
+                placeholder="Search resumes, analyses, or candidates..."
                 className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
               />
               {loading && <Loader2 className="h-4 w-4 text-muted-foreground animate-spin" />}
