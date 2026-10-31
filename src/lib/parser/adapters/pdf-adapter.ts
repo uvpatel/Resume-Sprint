@@ -1,3 +1,4 @@
+import "pdf-parse/worker";
 import { PDFParse } from "pdf-parse";
 import { ResumeExtractionResult, ResumeParserAdapter } from "../types";
 
@@ -26,8 +27,9 @@ export class PdfAdapter implements ResumeParserAdapter {
       );
     }
 
+    let parser: any;
     try {
-      const parser = new (PDFParse as any)({ data: buffer });
+      parser = new (PDFParse as any)({ data: buffer });
       await parser.load();
       const data = await parser.getText();
 
@@ -109,6 +111,10 @@ export class PdfAdapter implements ResumeParserAdapter {
       }
 
       throw new Error(`Failed to extract text from PDF: ${err.message || "Unknown error"}`);
+    } finally {
+      if (parser && typeof parser.destroy === "function") {
+        await parser.destroy().catch(() => {});
+      }
     }
   }
 }
