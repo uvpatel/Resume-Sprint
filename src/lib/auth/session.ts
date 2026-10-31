@@ -20,6 +20,12 @@ export async function getCurrentUser(): Promise<UserRecord | null> {
           id: authSession.user.id,
           email: authSession.user.email,
           name: authSession.user.name || authSession.user.email.split("@")[0],
+          image:
+            authSession.user.image ||
+            (authSession.user.email?.toLowerCase().includes("urvil") ||
+            authSession.user.name?.toLowerCase().includes("urvil")
+              ? "https://github.com/uvpatel.png"
+              : undefined),
           createdAt: authSession.user.createdAt
             ? new Date(authSession.user.createdAt).toISOString()
             : new Date().toISOString(),
@@ -36,6 +42,10 @@ export async function getCurrentUser(): Promise<UserRecord | null> {
         id: testUserId.trim(),
         email: `${testUserId.trim()}@example.com`,
         name: testUserId.trim(),
+        image:
+          testUserId.trim().toLowerCase().includes("urvil")
+            ? "https://github.com/uvpatel.png"
+            : undefined,
         createdAt: new Date().toISOString(),
       };
     }

@@ -22,8 +22,9 @@ interface LocalStore {
 export const DEMO_USER_ID = "usr_demo_01";
 export const DEMO_USER: UserRecord = {
   id: DEMO_USER_ID,
-  email: "candidate@resumesprint.io",
-  name: "Alex Taylor",
+  email: "urvilpatel700@gmail.com",
+  name: "Urvil Patel",
+  image: "https://github.com/uvpatel.png",
   createdAt: new Date().toISOString(),
 };
 
