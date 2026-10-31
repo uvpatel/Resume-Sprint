@@ -7,10 +7,10 @@ import {
   ShieldCheck,
   CheckCircle2,
   FileSearch,
-  MoreVertical,
 } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/empty-state";
 import { KpiCard } from "@/components/dashboard/kpi-card";
+import { ResumesTable } from "@/components/dashboard/resumes-table";
 
 function FormatBadge({ format }: { format: string }) {
   const f = format.toUpperCase();
@@ -130,112 +130,7 @@ export default async function ResumesListPage() {
           actionHref="/dashboard/new"
         />
       ) : (
-        <div className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="border-b border-border bg-muted/30 text-muted-foreground font-medium">
-                  <th scope="col" className="py-2.5 px-4 font-medium">Resume</th>
-                  <th scope="col" className="py-2.5 px-4 font-medium">Format</th>
-                  <th scope="col" className="py-2.5 px-4 font-medium">Uploaded</th>
-                  <th scope="col" className="py-2.5 px-4 font-medium">Latest Match</th>
-                  <th scope="col" className="py-2.5 px-4 font-medium text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {resumesWithScans.map((r) => (
-                  <tr
-                    key={r.id}
-                    className="hover:bg-muted/40 transition-colors group"
-                  >
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-7 h-7 rounded-lg bg-muted border border-border flex items-center justify-center shrink-0 text-muted-foreground">
-                          <FileText className="h-3.5 w-3.5" />
-                        </div>
-                        <div className="min-w-0">
-                          <Link
-                            href={`/dashboard/resumes/${r.id}`}
-                            className="font-medium text-foreground hover:text-primary truncate block transition-colors"
-                          >
-                            {r.originalFileName}
-                          </Link>
-                          <span className="text-[11px] text-muted-foreground font-mono">
-                            {(r.fileSize / 1024).toFixed(1)} KB
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-
-                    <td className="py-3 px-4">
-                      <FormatBadge format={r.fileType} />
-                    </td>
-
-                    <td className="py-3 px-4 text-muted-foreground font-mono text-[11px]">
-                      {new Date(r.createdAt).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </td>
-
-                    <td className="py-3 px-4">
-                      {r.latestScan ? (
-                        <div className="inline-flex items-center gap-1.5 font-medium text-foreground">
-                          <span
-                            className={`h-2 w-2 rounded-full ${
-                              r.latestScan.score >= 80
-                                ? "bg-emerald-500"
-                                : r.latestScan.score >= 60
-                                ? "bg-indigo-500"
-                                : "bg-amber-500"
-                            }`}
-                          />
-                          <span className="font-mono tabular-nums">{r.latestScan.score}%</span>
-                          <span className="text-muted-foreground text-[11px] font-normal truncate max-w-[140px]">
-                            ({r.latestScan.targetRole})
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="inline-flex items-center gap-1.5 text-muted-foreground text-[11px]">
-                          <span className="h-2 w-2 rounded-full bg-slate-300 dark:bg-zinc-600" />
-                          <span>Unscanned</span>
-                        </span>
-                      )}
-                    </td>
-
-                    <td className="py-3 px-4 text-right">
-                      <div className="inline-flex items-center gap-1.5">
-                        {r.latestScan ? (
-                          <Link
-                            href={`/dashboard/resumes/${r.id}/scan`}
-                            className="text-xs font-medium text-primary hover:text-primary/80 px-2.5 py-1 rounded-md hover:bg-primary/10 transition-colors"
-                          >
-                            Report
-                          </Link>
-                        ) : (
-                          <Link
-                            href="/dashboard/new"
-                            className="text-xs font-medium text-primary hover:text-primary/80 px-2.5 py-1 rounded-md hover:bg-primary/10 transition-colors"
-                          >
-                            Analyze
-                          </Link>
-                        )}
-                        <Link
-                          href={`/dashboard/resumes/${r.id}`}
-                          className="p-1 text-muted-foreground hover:text-foreground rounded hover:bg-muted transition-colors"
-                          aria-label="Options"
-                        >
-                          <MoreVertical className="h-3.5 w-3.5" />
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <ResumesTable initialResumes={resumesWithScans} />
       )}
     </div>
   );

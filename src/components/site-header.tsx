@@ -4,7 +4,8 @@ import Link from "next/link";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { UserMenu } from "@/components/auth/user-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Search, Bell } from "lucide-react";
+import { GlobalSearch } from "@/components/dashboard/global-search";
+import { Bell } from "lucide-react";
 
 interface SiteHeaderProps {
   user?: {
@@ -20,15 +21,8 @@ export function SiteHeader({ user }: SiteHeaderProps) {
       <div className="flex items-center gap-3 sm:gap-4 flex-1 max-w-xl">
         <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg h-8 w-8" />
 
-        {/* Compact search input */}
-        <div className="relative flex-1 max-w-xs hidden sm:block">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-          <input
-            type="search"
-            placeholder="Search resumes, analyses..."
-            className="w-full bg-muted/40 border border-border/80 rounded-lg pl-8 pr-3 py-1 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary transition-all"
-          />
-        </div>
+        {/* Functional Global Search (with Cmd+K, live auto-complete, keyboard navigation) */}
+        <GlobalSearch />
       </div>
 
       {/* Right: Theme Toggle, Notifications, User */}
